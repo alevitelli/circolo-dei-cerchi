@@ -1,22 +1,8 @@
 {
-    "version": 2,
-    "builds": [
-      { "src": "api/*.js", "use": "@vercel/node" },
-      { "src": "*.html", "use": "@vercel/static" },
-      { "src": "js/*.js", "use": "@vercel/static" },
-      { "src": "css/*.css", "use": "@vercel/static" }
-    ],
-    "routes": [
-      { "src": "/api/(.*)", "dest": "/api/$1.js" },
-      { "src": "/js/(.*)", "dest": "/js/$1" },
-      { "src": "/css/(.*)", "dest": "/css/$1" },
-      { "handle": "filesystem" },
-      { "src": "/(.*)", "dest": "/$1" },
-      { "src": "/calendar", "dest": "/calendar/index.html" },
-      { "src": "/membership", "dest": "/membership/index.html" },
-      { "src": "/info", "dest": "/info/index.html" },
-      { "src": "/event", "dest": "/event/index.html" }
-    ],
-    "cleanUrls": true,
-    "trailingSlash": false
-  }
+  "rewrites": [
+    { "source": "/calendar", "destination": "/calendar/index.html" },
+    { "source": "/membership", "destination": "/membership/index.html" },
+    { "source": "/info", "destination": "/info/index.html" },
+    { "source": "/event", "destination": "/event/index.html" }
+  ]
+}
