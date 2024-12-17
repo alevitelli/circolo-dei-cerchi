@@ -1,11 +1,9 @@
 async function initContentful() {
   try {
-    // Wait for config to be loaded
-    console.log('Waiting for configuration...');
+    // Wait for config to be available
     while (!window.CONFIG) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-    console.log('Configuration found:', window.CONFIG);
 
     const client = contentful.createClient({
       space: window.CONFIG.CONTENTFUL_SPACE_ID,

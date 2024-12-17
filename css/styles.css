@@ -18,7 +18,8 @@
 }
 
 body {
-    background-color: var(--color-white);
+    opacity: 1 !important;
+    background-color: var(--color-white) !important;
     color: var(--color-text);
     font-family: var(--font-primary);
     line-height: 1.5;
@@ -74,6 +75,8 @@ body {
 
 /* Events Stream */
 .events-stream {
+    min-height: 200px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
