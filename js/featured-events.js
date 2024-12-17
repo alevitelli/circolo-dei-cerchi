@@ -1,9 +1,14 @@
-// Initialize Contentful client
-const client = contentful.createClient({
-    space: 'evaxoo3zkmhs',
-    accessToken: 'uFZeacuGzO6TZAETfhPFQeTQS0Fd-W-57ZB08ce96oc'
+async function initContentful() {
+  // Wait for config to be available
+  while (!window.CONFIG) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  const client = contentful.createClient({
+    space: window.CONFIG.CONTENTFUL_SPACE_ID,
+    accessToken: window.CONFIG.CONTENTFUL_ACCESS_TOKEN
   });
-  
+
   // Function to format date
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -80,3 +85,6 @@ const client = contentful.createClient({
   
   // Load featured events when page loads
   document.addEventListener('DOMContentLoaded', loadFeaturedEvents);
+}
+
+document.addEventListener('DOMContentLoaded', initContentful);
