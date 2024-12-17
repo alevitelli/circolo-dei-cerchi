@@ -36,21 +36,31 @@ async function loadGalleryImages() {
     try {
         console.log('Fetching gallery images...');
         const response = await client.getEntries({
-            content_type: 'galleryImage',
+            content_type: 'gallery',
+            select: 'fields.image,fields.description,fields.order',
             order: 'fields.order'
         });
 
         console.log(`Received ${response.items.length} images`);
         
         const galleryContainer = document.querySelector('.gallery');
-        galleryContainer.innerHTML = response.items.map(image => `
-            <img src="${image.fields.image.fields.file.url}" 
-                 alt="${image.fields.description || 'Circolo dei Cerchi venue'}" 
-                 class="gallery-img">
-        `).join('');
+        galleryContainer.innerHTML = response.items.map(image => {
+            if (!image.fields.image || !image.fields.image.fields || !image.fields.image.fields.file) {
+                console.warn('Invalid image data:', image);
+                return '';
+            }
+            
+            return `
+                <img src="${image.fields.image.fields.file.url}" 
+                     alt="${image.fields.description || 'Circolo dei Cerchi venue'}" 
+                     class="gallery-img">
+            `;
+        }).join('');
 
     } catch (error) {
         console.error('Error loading images:', error);
+        document.querySelector('.gallery').innerHTML = 
+            `<div class="error-message">Error loading gallery: ${error.message}</div>`;
         throw error;
     }
 }
