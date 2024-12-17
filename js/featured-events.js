@@ -1,7 +1,7 @@
 // Initialize Contentful client
 const client = contentful.createClient({
-    space: process.env.CONTENTFUL_SPACE_ID,
-    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN
+    space: 'evaxoo3zkmhs',
+    accessToken: 'uFZeacuGzO6TZAETfhPFQeTQS0Fd-W-57ZB08ce96oc'
   });
   
   // Function to format date
