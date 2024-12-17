@@ -6,6 +6,14 @@
     <title>Circolo dei Cerchi</title>
     <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
     <script src="/js/init.js"></script>
+    <script>
+      // Wait for configuration to be loaded
+      async function waitForConfig() {
+        while (!window.CONFIG) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+    </script>
     <script src="/js/featured-events.js" defer></script>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
