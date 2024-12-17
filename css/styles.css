@@ -75,17 +75,43 @@ body {
 
 /* Events Stream */
 .events-stream {
-    min-height: 200px;
+    display: block;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    background-color: var(--color-background);
 }
 
 .event-card {
+    display: block;
+    margin-bottom: 20px;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.event-card.full-width {
     width: 100%;
-    max-height: 100%;
+}
+
+.event-info {
+    padding: 10px;
+}
+
+.event-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Debug styles */
+.event-card {
+    border: 2px solid red !important;
+}
+
+.event-info {
+    border: 2px solid blue !important;
 }
 
 .event-card.featured {

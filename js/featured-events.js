@@ -41,7 +41,30 @@ async function initContentful() {
     const featuredEvents = response.items;
     if (featuredEvents.length > 0) {
       console.log('Rendering events...');
-      // Rest of your rendering code...
+      eventsContainer.innerHTML = ''; // Clear existing content
+      
+      // Display first 4 events full width
+      const fullWidthEvents = featuredEvents.slice(0, 4);
+      fullWidthEvents.forEach(event => {
+        const eventHtml = createFeaturedEventHTML(event, true);
+        console.log('Adding full-width event to container');
+        eventsContainer.innerHTML += eventHtml;
+      });
+
+      // Create grid for remaining events (5-10)
+      if (featuredEvents.length > 4) {
+        console.log('Creating grid for additional events');
+        const eventsGrid = document.createElement('div');
+        eventsGrid.className = 'events-grid';
+        
+        featuredEvents.slice(4, 10).forEach(event => {
+          const eventHtml = createFeaturedEventHTML(event);
+          eventsGrid.innerHTML += eventHtml;
+        });
+
+        eventsContainer.appendChild(eventsGrid);
+      }
+      console.log('Events rendered successfully');
     } else {
       console.log('No featured events found');
       eventsContainer.innerHTML = '<p>No featured events available.</p>';
@@ -53,6 +76,47 @@ async function initContentful() {
       eventsContainer.innerHTML = `<p>Error loading events: ${error.message}</p>`;
     }
   }
+}
+
+function createFeaturedEventHTML(event, isFullWidth = false) {
+    console.log('Creating HTML for event:', event.fields.eventName);
+    
+    // Safely get the image URL
+    const imageUrl = event.fields.image?.fields?.file?.url
+        ? `https:${event.fields.image.fields.file.url}`
+        : '';
+    
+    // Format the date
+    const date = new Date(event.fields.eventDate);
+    const formattedDate = date.toLocaleDateString('it-IT', {
+        weekday: 'short',
+        day: '2-digit',
+        month: '2-digit',
+        year: '2-digit'
+    }).toUpperCase();
+
+    console.log('Event details:', {
+        name: event.fields.eventName,
+        venue: event.fields.venue,
+        date: formattedDate,
+        hasImage: !!imageUrl
+    });
+
+    // Create the HTML
+    const html = `
+        <div class="event-card ${isFullWidth ? 'full-width' : ''}">
+            ${imageUrl ? `<div class="event-image"><img src="${imageUrl}" alt="${event.fields.eventName}"></div>` : ''}
+            <div class="event-info">
+                <h3>${event.fields.eventName}</h3>
+                <p class="venue">${event.fields.venue || ''}</p>
+                <p class="date">${formattedDate}</p>
+                <a href="/event.html?id=${event.sys.id}" class="button">More Info</a>
+            </div>
+        </div>
+    `;
+
+    console.log('Generated HTML:', html);
+    return html;
 }
 
 // Start initialization when DOM is ready
