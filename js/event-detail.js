@@ -1,40 +1,59 @@
 async function initContentful() {
-  try {
-    // Wait for config to be loaded
-    while (!window.CONFIG) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+    try {
+        console.log('Waiting for configuration...');
+        while (!window.CONFIG) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        const config = window.getConfig();
+        console.log('Using configuration:', {
+            spaceId: config.CONTENTFUL_SPACE_ID,
+            tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
+        });
+
+        if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_ACCESS_TOKEN) {
+            throw new Error('Invalid configuration');
+        }
+
+        console.log('Creating Contentful client...');
+        const client = contentful.createClient({
+            space: config.CONTENTFUL_SPACE_ID,
+            accessToken: config.CONTENTFUL_ACCESS_TOKEN
+        });
+
+        await loadEventDetail(client);
+    } catch (error) {
+        console.error('Error initializing Contentful:', error);
+        document.querySelector('.event-detail-container').innerHTML = 
+            `<div class="error-message">Error loading event: ${error.message}</div>`;
     }
-
-    const client = contentful.createClient({
-      space: window.CONFIG.CONTENTFUL_SPACE_ID,
-      accessToken: window.CONFIG.CONTENTFUL_ACCESS_TOKEN
-    });
-
-    await loadEventDetail(client);
-  } catch (error) {
-    console.error('Error initializing Contentful:', error);
-  }
 }
 
 async function loadEventDetail(client) {
-    // Get event ID from URL parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const eventId = urlParams.get('id');
-
-    if (!eventId) {
-        window.location.href = '/calendar.html';
-        return;
-    }
-
     try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');
+
+        if (!eventId) {
+            window.location.href = '/calendar.html';
+            return;
+        }
+
+        console.log('Fetching event details for:', eventId);
         const entry = await client.getEntry(eventId);
+        console.log('Event data received:', entry.fields.eventName);
+        
         displayEvent(entry);
     } catch (error) {
         console.error('Error loading event:', error);
+        document.querySelector('.event-detail-container').innerHTML = 
+            `<div class="error-message">Error loading event: ${error.message}</div>`;
     }
 }
 
 function displayEvent(event) {
+    console.log('Displaying event:', event.fields.eventName);
+    
     // Set page title
     document.title = `${event.fields.eventName} - Circolo dei Cerchi`;
 
@@ -80,6 +99,8 @@ function displayEvent(event) {
             
         document.querySelector('.event-detail-description').innerHTML = formattedDescription;
     }
+
+    console.log('Event display complete');
 }
 
 document.addEventListener('DOMContentLoaded', initContentful);
