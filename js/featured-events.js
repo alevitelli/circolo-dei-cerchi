@@ -95,22 +95,24 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
         year: '2-digit'
     }).toUpperCase();
 
-    console.log('Event details:', {
-        name: event.fields.eventName,
-        venue: event.fields.venue,
-        date: formattedDate,
-        hasImage: !!imageUrl
-    });
-
-    // Create the HTML
+    // Create the HTML with the original structure
     const html = `
-        <div class="event-card ${isFullWidth ? 'full-width' : ''}">
-            ${imageUrl ? `<div class="event-image"><img src="${imageUrl}" alt="${event.fields.eventName}"></div>` : ''}
-            <div class="event-info">
-                <h3>${event.fields.eventName}</h3>
-                <p class="venue">${event.fields.venue || ''}</p>
-                <p class="date">${formattedDate}</p>
-                <a href="/event.html?id=${event.sys.id}" class="button">More Info</a>
+        <div class="event-card ${isFullWidth ? 'featured' : ''}">
+            <div class="event-image">
+                <img src="${imageUrl}" alt="${event.fields.eventName}">
+            </div>
+            <div class="event-overlay"></div>
+            <div class="event-content">
+                <div class="event-meta">
+                    ${event.fields.venue ? `<span class="venue">${event.fields.venue}</span>` : ''}
+                    ${event.fields.venue ? '<span class="divider"> | </span>' : ''}
+                    <span class="date">${formattedDate}</span>
+                </div>
+                <h2 class="event-title">
+                    <a href="/event.html?id=${event.sys.id}">${event.fields.eventName}</a>
+                </h2>
+                ${event.fields.eventDetail ? `<p class="event-detail">${event.fields.eventDetail}</p>` : ''}
+                <a href="/event.html?id=${event.sys.id}" class="cta-button">More Info</a>
             </div>
         </div>
     `;
