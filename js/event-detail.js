@@ -1,6 +1,6 @@
 const client = contentful.createClient({
-    space: 'evaxoo3zkmhs',
-    accessToken: 'uFZeacuGzO6TZAETfhPFQeTQS0Fd-W-57ZB08ce96oc'
+    space: process.env.CONTENTFUL_SPACE_ID,
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN
 });
 
 async function loadEventDetail() {
