@@ -1,9 +1,22 @@
-const client = contentful.createClient({
-    space: process.env.CONTENTFUL_SPACE_ID,
-    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN
-});
+async function initContentful() {
+  try {
+    // Wait for config to be loaded
+    while (!window.CONFIG) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
 
-async function loadEventDetail() {
+    const client = contentful.createClient({
+      space: window.CONFIG.CONTENTFUL_SPACE_ID,
+      accessToken: window.CONFIG.CONTENTFUL_ACCESS_TOKEN
+    });
+
+    await loadEventDetail(client);
+  } catch (error) {
+    console.error('Error initializing Contentful:', error);
+  }
+}
+
+async function loadEventDetail(client) {
     // Get event ID from URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     const eventId = urlParams.get('id');
@@ -69,4 +82,4 @@ function displayEvent(event) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadEventDetail);
+document.addEventListener('DOMContentLoaded', initContentful);
