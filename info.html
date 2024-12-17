@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info - Circolo dei Cerchi</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header class="main-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="//images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png" alt="Circolo dei Cerchi" class="header-logo">
+                <img src="//images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a6953b67c75b74c520d657b951253/logo_1.png" alt="Circolo dei Cerchi" class="header-logo">
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/calendar" class="nav-link">WHAT'S ON</a></li>
+                    <li><a href="/membership" class="nav-link">MEMBERSHIP</a></li>
+                    <li><a href="/info" class="nav-link">INFO</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Info Content -->
+    <main class="info-container">
+        <div class="info-sidebar">
+            <nav class="info-nav">
+                <select class="info-nav-select" style="display: none;">
+                    <option value="#about">ABOUT US</option>
+                    <option value="#lospazio">LO SPAZIO</option>
+                    <option value="#rentit">RENT IT</option>
+                    <option value="#contact">CONTACTS</option>
+                </select>
+                <ul>
+                    <li><a href="#about" class="info-nav-link">ABOUT US</a></li>
+                    <li><a href="#lospazio" class="info-nav-link">LO SPAZIO</a></li>
+                    <li><a href="#rentit" class="info-nav-link">RENT IT</a></li>
+                    <li><a href="#contact" class="info-nav-link">CONTACTS</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="info-content">
+            <section id="about" class="info-section">
+                <h2>ABOUT US</h2>
+                <p>Ha aperto un nuovo spazio in città: il Circolo dei Cerchi.<p>
+                <p>Un grande spazio con vista Circo Massimo. Uno spazio da riempire di musica e cultura.</p>
+                <p>Il Circolo dei Cerchi nasce dall’esigenza di creare un nuovo polo culturale nel quadrante più centrale della città. L’obiettivo è quello di creare un luogo in cui la qualità della programmazione e la sua fruizione vadano di pari passo.
+                    A questo proposito la scelta della location non è stata casuale: il Circolo ha infatti trovato casa in un
+                    ex granaio del ‘600 ristrutturato e ripensato per accogliere e adattarsi a varie tipologie di eventi
+                    (concerti Live, Dj set, performance ecc), il tutto coronato da un nuovo impianto Funktion One che
+                    soddisferà anche gli audiofili più accaniti.
+                <p>La gestione della location e della programmazione sono curati dal collettivo che si cela dietro i format
+                    Blaze* e Nuur.</p>
+            </section>
+
+            <section id="lospazio" class="info-section">
+                <h2>LO SPAZIO</h2>
+                <div class="gallery-container">
+                    <div class="gallery">
+                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/4uqghZwkXrJCBknKFkcQPj/0337fd4430f955cb131b922e91f7e717/cc_5.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
+                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/1heXP0muiXu5GaJ21wj5Cf/e16f7132bab8994cbc2ddee158523f85/cc_1.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
+                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/1mpmZ6A8rQvgWJJU3K7xq9/569ec0a6b49b9d5435eb37d27366f918/cc_3.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
+                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/7EwEBkfaz4Oq1sOoU11p1t/c90f7558f4613a05ae8a92138616751f/cc_4.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
+                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/3hpUxmNS5gNKLJHc8HOIkE/c7916718781f3287e5a93c2cf073b0bc/cc_2.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Modal for expanded images -->
+            <div class="modal" id="imageModal">
+                <span class="modal-close">&times;</span>
+                <button class="modal-prev">&lt;</button>
+                <button class="modal-next">&gt;</button>
+                <div class="modal-content">
+                    <img id="modalImage" src="" alt="Expanded view">
+                </div>
+            </div>
+
+            <section id="rentit" class="info-section">
+                <h2>RENT IT</h2>
+                <p>Prenota il tuo spazio per eventi, concerti, performance, Dj set ecc.</p>
+                <p>Contattaci per informazioni e prenotazioni.</p>
+            </section>
+
+            <section id="contact" class="info-section">
+                <h2>CONTACTS</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <section class="footer-info">
+                    <img src="//images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png" alt="Circolo dei Cerchi" class="footer-logo">
+                    <img src="//images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a6953b67c75b74c520d657b951253/logo_1.png" alt="Circolo dei Cerchi" class="footer-logo">
+                    <p>Via dei Cerchi 75<br>Roma, Italia</p>
+                </section>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/gallery.js"></script>
+    <script>
+        // Handle mobile navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.querySelector('.info-nav-select');
+            const navList = document.querySelector('.info-nav ul');
+            
+            // Show/hide appropriate navigation based on screen size
+            function toggleNavigation() {
+                if (window.innerWidth <= 768) {
+                    select.style.display = 'block';
+                    navList.style.display = 'none';
+                } else {
+                    select.style.display = 'none';
+                    navList.style.display = 'block';
+                }
+            }
+
+            // Initial check
+            toggleNavigation();
+
+            // Listen for window resize
+            window.addEventListener('resize', toggleNavigation);
+
+            // Handle dropdown selection
+            select.addEventListener('change', function() {
+                const selectedValue = this.value;
+                document.querySelector(selectedValue).scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

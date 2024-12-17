@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+    <script src="js/events.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's On - Circolo dei Cerchi</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header class="main-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="//images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png" alt="Circolo dei Cerchi" class="header-logo">
+                <img src="//images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a6953b67c75b74c520d657b951253/logo_1.png" alt="Circolo dei Cerchi" class="header-logo">
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/calendar" class="nav-link">WHAT'S ON</a></li>
+                    <li><a href="/membership" class="nav-link">MEMBERSHIP</a></li>
+                    <li><a href="/info" class="nav-link">INFO</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Calendar Content -->
+    <main class="calendar-stream">
+        <!-- Filter/Time Period Selection -->
+        <div class="calendar-filter">
+            <select class="time-filter">
+            </select>
+        </div>
+
+        <!-- Events will be dynamically inserted here -->
+        <div class="calendar-events"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <section class="footer-info">
+                    <img src="//images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png" alt="Circolo dei Cerchi" class="footer-logo">
+                    <img src="//images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a6953b67c75b74c520d657b951253/logo_1.png" alt="Circolo dei Cerchi" class="footer-logo">
+                    <p>Via dei Cerchi 75<br>Roma, Italia</p>
+                </section>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

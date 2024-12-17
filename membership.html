@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership - Circolo dei Cerchi</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header class="main-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="//images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png" alt="Circolo dei Cerchi" class="header-logo">
+                <img src="//images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a6953b67c75b74c520d657b951253/logo_1.png" alt="Circolo dei Cerchi" class="header-logo">
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/calendar" class="nav-link">WHAT'S ON</a></li>
+                    <li><a href="/membership" class="nav-link">MEMBERSHIP</a></li>
+                    <li><a href="/info" class="nav-link">INFO</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <section class="membership-form-container container">
+            <h1 class="section-title">BECOME A MEMBER</h1>
+            <form id="membershipForm" class="membership-form">
+                <div class="form-group">
+                    <label for="email">Email*:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nomeECognome">Nome e Cognome*:</label>
+                    <input type="text" id="nomeECognome" name="nomeECognome" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cittaEProvinciaDiNascita">Città e Provincia di Nascita*:</label>
+                    <input type="text" id="cittaEProvinciaDiNascita" name="cittaEProvinciaDiNascita" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dataDiNascita">Data di Nascita*:</label>
+                    <input type="date" id="dataDiNascita" name="dataDiNascita" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="indirizzoEComuneDiResidenza">Indirizzo e Comune di Residenza*:</label>
+                    <input type="text" id="indirizzoEComuneDiResidenza" name="indirizzoEComuneDiResidenza" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="codicefiscale">Codice Fiscale*:</label>
+                    <input type="text" id="codicefiscale" name="codicefiscale" required>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="statuteConsent" name="statuteConsent" required>
+                        <label for="statuteConsent">Dichiaro di avere preso visione dello Statuto e di approvarlo in ogni sua parte*</label>
+                    </div>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="gdprConsent" name="gdprConsent" required>
+                        <label for="gdprConsent">Presto il consenso al trattamento dei dati secondo normativa Regolamento UE/2016/679 General Data Protection Regulation (G.D.P.R.)*</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Submit Application</button>
+            </form>
+            <div id="formMessage"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <section class="footer-info">
+                    <img src="//images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png" alt="Circolo dei Cerchi" class="footer-logo">
+                    <img src="//images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a6953b67c75b74c520d657b951253/logo_1.png" alt="Circolo dei Cerchi" class="footer-logo">
+                    <p>Via dei Cerchi 75<br>Roma, Italia</p>
+                </section>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Modal with unique identifiers -->
+    <div id="membershipResponseModal" class="membership-modal">
+        <div class="membership-modal-content">
+            <p id="membershipModalMessage" class="membership-modal-message"></p>
+            <button class="membership-modal-button" id="closeModalButton">Close</button>
+        </div>
+    </div>
+
+    <script src="js/membership-form.js"></script>
+</body>
+</html>
