@@ -5,9 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Membership - Circolo dei Cerchi</title>
     <link rel="stylesheet" href="css/styles.css">
+    <!-- Load Contentful SDK first -->
+    <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+    <!-- Then load configuration -->
+    <script src="/js/init.js"></script>
+    <!-- Load other dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Then load your application code -->
+    <script src="/js/membership-form.js" defer></script>
 </head>
 <body>
     <!-- Header/Navigation -->
@@ -102,7 +109,5 @@
             <button class="membership-modal-button" id="closeModalButton">Close</button>
         </div>
     </div>
-
-    <script src="js/membership-form.js"></script>
 </body>
 </html>

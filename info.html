@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Info - Circolo dei Cerchi</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <!-- Load Contentful SDK first -->
+    <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+    <!-- Then load configuration -->
+    <script src="/js/init.js"></script>
+    <!-- Then load your application code -->
+    <script src="/js/gallery.js" defer></script>
 </head>
 <body>
     <!-- Header/Navigation -->
@@ -61,11 +67,7 @@
                 <h2>LO SPAZIO</h2>
                 <div class="gallery-container">
                     <div class="gallery">
-                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/4uqghZwkXrJCBknKFkcQPj/0337fd4430f955cb131b922e91f7e717/cc_5.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
-                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/1heXP0muiXu5GaJ21wj5Cf/e16f7132bab8994cbc2ddee158523f85/cc_1.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
-                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/1mpmZ6A8rQvgWJJU3K7xq9/569ec0a6b49b9d5435eb37d27366f918/cc_3.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
-                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/7EwEBkfaz4Oq1sOoU11p1t/c90f7558f4613a05ae8a92138616751f/cc_4.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
-                        <img src="https://images.ctfassets.net/evaxoo3zkmhs/3hpUxmNS5gNKLJHc8HOIkE/c7916718781f3287e5a93c2cf073b0bc/cc_2.jpg" alt="Circolo dei Cerchi venue" class="gallery-img">
+                        <!-- Gallery images will be loaded dynamically -->
                     </div>
                 </div>
             </section>
