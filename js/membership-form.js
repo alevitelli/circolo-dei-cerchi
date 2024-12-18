@@ -180,21 +180,56 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
 
+        function parseAndFormatDate(dateString) {
+            try {
+                // First try parsing as ISO date (YYYY-MM-DD)
+                let date = new Date(dateString);
+                
+                // If that didn't work, try parsing other formats
+                if (isNaN(date.getTime())) {
+                    // Try parsing "DD Mon YYYY" format (like "18 Dec 2024")
+                    const parts = dateString.split(' ');
+                    if (parts.length === 3) {
+                        const months = {
+                            'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+                            'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+                            'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+                        };
+                        const day = parts[0].padStart(2, '0');
+                        const month = months[parts[1]];
+                        const year = parts[2];
+                        if (month) {
+                            date = new Date(`${year}-${month}-${day}`);
+                        }
+                    }
+                }
+
+                // If we still don't have a valid date, throw an error
+                if (isNaN(date.getTime())) {
+                    throw new Error('Invalid date format');
+                }
+
+                // Format the date as DD/MM/YYYY
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                
+                return `${day}/${month}/${year}`;
+            } catch (error) {
+                console.error('Date parsing error:', error);
+                throw new Error('Invalid date format. Please use DD/MM/YYYY format.');
+            }
+        }
+
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             showMembershipModal('Processing your application...');
             
             try {
-                // Format the date to DD/MM/YYYY regardless of input format
-                const rawDate = new Date(form.dataDiNascita.value);
-                const formattedDate = rawDate.toLocaleDateString('it-IT', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
+                // Format the date using our new helper function
+                const formattedDate = parseAndFormatDate(form.dataDiNascita.value);
 
-                // 1. Collect form data with formatted date
                 const formData = {
                     fields: {
                         email: {
@@ -207,7 +242,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             'en-US': form.cittaEProvinciaDiNascita.value
                         },
                         dataDiNascita: {
-                            'en-US': formattedDate // Use formatted date here
+                            'en-US': formattedDate
                         },
                         indirizzoEComuneDiResidenza: {
                             'en-US': form.indirizzoEComuneDiResidenza.value
