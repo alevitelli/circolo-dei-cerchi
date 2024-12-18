@@ -69,7 +69,10 @@ body {
 }
 
 .nav-link:hover {
+    color: var(--color-accent2); /* Keep text black */
     text-decoration: underline;
+    text-decoration-color: var(--color-background); /* Yellow underline on hover */
+    text-decoration-thickness: 2px; /* Makes the underline more visible */
 }
 
 /* Events Stream */
@@ -492,6 +495,13 @@ body {
 }
 
 .info-sidebar {
+    /* Add these properties for desktop */
+    @media screen and (min-width: 769px) {
+        position: sticky;
+        top: 100px; /* Adjust this value to control distance from top of viewport */
+        height: fit-content;
+        align-self: flex-start;
+    }
     margin-left: 6rem;
     padding: 5rem 2rem;
     line-height: 0.8rem;
@@ -516,7 +526,10 @@ body {
 }
 
 .info-nav-link:hover {
+    color: var(--color-accent2); /* Keep text black */
     text-decoration: underline;
+    text-decoration-color: var(--color-background); /* Yellow underline on hover */
+    text-decoration-thickness: 2px; /* Makes the underline more visible */
 }
 
 .info-content {
