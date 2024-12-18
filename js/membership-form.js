@@ -1,15 +1,29 @@
 document.addEventListener('DOMContentLoaded', async function() {
     try {
-        console.log('Waiting for configuration...');
-        while (!window.CONFIG) {
+        console.log('Checking for configuration...');
+        console.log('Current CONFIG:', window.CONFIG);
+        
+        // Wait for configuration with timeout
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds total
+        
+        while (!window.CONFIG && attempts < maxAttempts) {
+            console.log('Waiting for configuration... Attempt:', attempts + 1);
             await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        
+        if (!window.CONFIG) {
+            throw new Error('Configuration failed to load after 5 seconds');
         }
         
         const config = window.getConfig();
-        console.log('Using configuration:', {
-            spaceId: config.CONTENTFUL_SPACE_ID,
+        console.log('Configuration loaded:', {
+            hasSpaceId: !!config.CONTENTFUL_SPACE_ID,
             hasManagementToken: !!config.CONTENTFUL_MANAGEMENT_TOKEN,
-            hasEmailJS: !!config.EMAILJS_PUBLIC_KEY
+            hasEmailJS: !!config.EMAILJS_PUBLIC_KEY,
+            hasServiceId: !!config.EMAILJS_SERVICE_ID,
+            hasTemplateId: !!config.EMAILJS_TEMPLATE_ID
         });
 
         if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_MANAGEMENT_TOKEN || !config.EMAILJS_PUBLIC_KEY) {
