@@ -233,18 +233,24 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Create a function to initialize EmailJS
         async function initializeEmailJS(publicKey) {
+            if (emailjsInitialized) {
+                console.log('EmailJS already initialized');
+                return;
+            }
+        
             try {
                 if (!publicKey) {
                     throw new Error('EmailJS public key is missing');
                 }
+        
+                console.log('Initializing EmailJS...');
+                await emailjs.init(publicKey);
                 
-                // Add a timeout to the initialization
-                const initPromise = emailjs.init(publicKey);
-                const timeoutPromise = new Promise((_, reject) => {
-                    setTimeout(() => reject(new Error('EmailJS initialization timed out')), 10000);
-                });
-
-                await Promise.race([initPromise, timeoutPromise]);
+                // Verify initialization
+                if (typeof emailjs.send !== 'function') {
+                    throw new Error('EmailJS not properly initialized');
+                }
+                
                 emailjsInitialized = true;
                 console.log('EmailJS initialized successfully');
             } catch (error) {
@@ -377,64 +383,88 @@ document.addEventListener('DOMContentLoaded', async function() {
             try {
                 console.log('Starting email process...');
                 
+                // Validate inputs
+                if (!formData?.fields?.email?.['en-US']) {
+                    throw new Error('Invalid email address in form data');
+                }
+                if (!formData?.fields?.nomeECognome?.['en-US']) {
+                    throw new Error('Invalid name in form data');
+                }
+                if (!pdfBase64) {
+                    throw new Error('Missing PDF attachment');
+                }
+        
                 // Check if EmailJS needs initialization
                 if (!emailjsInitialized) {
                     console.log('Initializing EmailJS...');
-                    try {
-                        await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
-                        console.log('EmailJS initialized successfully');
-                    } catch (initError) {
-                        console.error('EmailJS initialization error:', initError);
-                        throw new Error(`Email service initialization failed: ${initError.message}`);
-                    }
+                    await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
                 }
-
-                // Log email parameters (excluding the PDF attachment for clarity)
-                console.log('Preparing email parameters:', {
+        
+                // Clean and validate PDF data
+                const pdfData = pdfBase64.split(',')[1] || pdfBase64;
+                
+                // Log parameters for debugging (excluding PDF content)
+                console.log('Email parameters:', {
                     to_email: formData.fields.email['en-US'],
                     to_name: formData.fields.nomeECognome['en-US'],
                     service_id: config.EMAILJS_SERVICE_ID,
                     template_id: config.EMAILJS_TEMPLATE_ID,
-                    pdf_attachment_size: pdfBase64.length,
+                    hasPdfAttachment: !!pdfData,
+                    pdfSize: pdfData.length
                 });
-
-                // Split PDF data to avoid potential size issues
-                const pdfData = pdfBase64.split(',')[1];
-                if (!pdfData) {
-                    throw new Error('Invalid PDF data format');
-                }
-
+        
+                // Prepare email parameters
                 const emailParams = {
-                    to_email: formData.fields.email['en-US'],
-                    to_name: formData.fields.nomeECognome['en-US'],
+                    to_email: formData.fields.email['en-US'].trim(),
+                    to_name: formData.fields.nomeECognome['en-US'].trim(),
                     message: "Thank you for your membership application!",
                     pdf_attachment: pdfData,
                     logo1_url: 'https://images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a953b67c75b74c520d657b951253/logo_1.png',
                     logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
                 };
-
+        
+                // Validate all required parameters are present
+                const requiredParams = ['to_email', 'to_name', 'pdf_attachment'];
+                for (const param of requiredParams) {
+                    if (!emailParams[param]) {
+                        throw new Error(`Missing required email parameter: ${param}`);
+                    }
+                }
+        
                 console.log('Sending email...');
+                
+                // Add error handling for the send operation
                 try {
-                    const response = await emailjs.send(
-                        config.EMAILJS_SERVICE_ID,
-                        config.EMAILJS_TEMPLATE_ID,
-                        emailParams,
-                        config.EMAILJS_PUBLIC_KEY
-                    );
+                    const response = await new Promise((resolve, reject) => {
+                        emailjs.send(
+                            config.EMAILJS_SERVICE_ID,
+                            config.EMAILJS_TEMPLATE_ID,
+                            emailParams,
+                            config.EMAILJS_PUBLIC_KEY
+                        ).then(
+                            (response) => resolve(response),
+                            (error) => reject(error)
+                        );
+                    });
+        
                     console.log('Email sent successfully:', response);
                     return response;
                 } catch (sendError) {
-                    console.error('EmailJS send error:', {
+                    console.error('EmailJS send error details:', {
                         error: sendError,
-                        message: sendError.message,
-                        stack: sendError.stack,
+                        message: sendError.message || 'Unknown error',
                         status: sendError.status,
-                        text: sendError.text
+                        text: sendError.text,
+                        name: sendError.name
                     });
-                    throw new Error(`Failed to send email: ${sendError.message}`);
+                    throw new Error(sendError.text || sendError.message || 'Failed to send email');
                 }
             } catch (error) {
-                console.error('Email process failed:', error);
+                console.error('Email process failed:', {
+                    error: error,
+                    message: error.message,
+                    stack: error.stack
+                });
                 throw error;
             }
         }
