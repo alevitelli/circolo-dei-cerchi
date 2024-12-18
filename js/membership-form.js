@@ -278,16 +278,22 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const checkout = await response.json();
                 console.log('Checkout response:', checkout);
         
-                if (!checkout.id || !checkout.payment_url) {
+                if (!checkout.id) {
                     console.error('Invalid checkout response:', checkout);
                     throw new Error('Invalid checkout response from SumUp');
                 }
         
+                // Construct the payment URL using the checkout ID
+                const paymentUrl = `https://pay.sumup.com/b2c/v1/checkout?checkoutId=${checkout.id}`;
+        
                 // Store checkout data
                 sessionStorage.setItem('sumupCheckoutId', checkout.id);
-                sessionStorage.setItem('sumupPaymentUrl', checkout.payment_url);
+                sessionStorage.setItem('sumupPaymentUrl', paymentUrl);
         
-                return checkout;
+                return {
+                    ...checkout,
+                    payment_url: paymentUrl
+                };
         
             } catch (error) {
                 console.error('SumUp checkout creation failed:', error);
