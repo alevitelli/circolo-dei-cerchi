@@ -246,6 +246,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Add this function to handle SumUp checkout creation
         async function createSumUpCheckout(formData) {
             try {
+                // Create a proper return URL that points to your membership page
+                const returnUrl = new URL('/membership', window.location.origin).toString();
+                
                 const response = await fetch(`${SUMUP_API_URL}/v0.1/checkouts`, {
                     method: 'POST',
                     headers: {
@@ -254,22 +257,31 @@ document.addEventListener('DOMContentLoaded', async function() {
                     },
                     body: JSON.stringify({
                         merchant_code: SUMUP_CONFIG.merchant_code,
-                        amount: 5.00, // Set your membership fee amount
+                        amount: 25.00,
                         currency: 'EUR',
                         checkout_reference: `membership-${Date.now()}`,
-                        description: 'Tessera Circolo dei Cerchi',
-                        return_url: `${window.location.origin}/membership?payment_status=success`,
-                        customer_email: formData.fields.email['en-US']
+                        description: 'Circolo dei Cerchi Membership Fee',
+                        return_url: returnUrl,
+                        customer_email: formData.fields.email['en-US'],
+                        redirect: {
+                            success_url: returnUrl + '?status=PAID',
+                            failure_url: returnUrl + '?status=FAILED'
+                        }
                     })
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json();
+                    console.error('SumUp API error:', errorData);
                     throw new Error(`Failed to create SumUp checkout: ${errorData.message || 'Unknown error'}`);
                 }
 
                 const checkoutData = await response.json();
                 console.log('SumUp checkout created:', checkoutData);
+                
+                // Store the checkout ID for verification later
+                sessionStorage.setItem('sumupCheckoutId', checkoutData.id);
+                
                 return checkoutData;
 
             } catch (error) {
@@ -282,173 +294,178 @@ document.addEventListener('DOMContentLoaded', async function() {
             e.preventDefault();
             
             try {
-                // Check if we're returning from SumUp payment
                 const urlParams = new URLSearchParams(window.location.search);
-                const checkoutId = urlParams.get('checkout_id');
                 const paymentStatus = urlParams.get('status');
-
-                // If we have a checkout_id and status, verify the payment
-                if (checkoutId && paymentStatus) {
-                    if (paymentStatus !== 'PAID') {
-                        throw new Error('Payment was not completed successfully');
-                    }
-                    
-                    // Continue with existing form submission logic...
-                    showMembershipModal('Processing your application...');
-                    
-                    // Format date once at the beginning
-                    const rawDate = new Date(form.dataDiNascita.value);
-                    const formattedDateDisplay = rawDate.toLocaleDateString('it-IT', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    });
-                    const contentfulDate = rawDate.toISOString().split('T')[0]; // YYYY-MM-DD for Contentful
-
-                    // 1. Collect form data with formatted date
-                    const formData = {
-                        fields: {
-                            email: {
-                                'en-US': form.email.value
-                            },
-                            nomeECognome: {
-                                'en-US': form.nomeECognome.value
-                            },
-                            cittaEProvinciaDiNascita: {
-                                'en-US': form.cittaEProvinciaDiNascita.value
-                            },
-                            dataDiNascita: {
-                                'en-US': contentfulDate  // Use ISO format for Contentful
-                            },
-                            indirizzoEComuneDiResidenza: {
-                                'en-US': form.indirizzoEComuneDiResidenza.value
-                            },
-                            codicefiscale: {
-                                'en-US': form.codicefiscale.value
-                            }
-                        }
-                    };
-                    
-                    
-
-
-                    // 2. Generate QR Code
-                    const qrCodeURL = await generateQRCode(formData);
-
-                    // 3. Generate PDF
-                    const { blob: pdfBlob, pdfBase64 } = await generatePDF(formData, qrCodeURL);
-                    const fileName = `membership_${formData.fields.nomeECognome['en-US'].replace(/\s+/g, '_')}.pdf`;
-
-                    // 4. Download PDF locally
-                    await downloadPDF(pdfBlob, fileName);
-
-                    // Ensure EmailJS is initialized before sending
-                    if (!emailjsInitialized) {
-                        console.log('Initializing EmailJS...');
-                        await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
-                    }
-                    
-                    // 5. Send email with PDF attachment
-                    console.log('Attempting to send email...', {
-                        serviceId: config.EMAILJS_SERVICE_ID,
-                        templateId: config.EMAILJS_TEMPLATE_ID,
-                        hasPublicKey: !!config.EMAILJS_PUBLIC_KEY
-                    });
-
-                    const emailParams = {
-                        to_email: form.email.value,
-                        to_name: form.nomeECognome.value,
-                        message: "Thank you for your membership application!",
-                        pdf_attachment: pdfBase64.split(',')[1],
-                        logo1_url: 'https://images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a6953b67c75b74c520d657b951253/logo_1.png',
-                        logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
-                    };
-
-                    try {
-                        // Add a small delay before sending (sometimes helps with mobile)
-                        await new Promise(resolve => setTimeout(resolve, 500));
+                const storedFormData = sessionStorage.getItem('membershipFormData');
+                
+                // If returning from payment
+                if (paymentStatus) {
+                    if (paymentStatus === 'PAID' && storedFormData) {
+                        // Retrieve stored form data
+                        formData = JSON.parse(storedFormData);
                         
-                        const emailResponse = await emailjs.send(
-                            config.EMAILJS_SERVICE_ID,
-                            config.EMAILJS_TEMPLATE_ID,
-                            emailParams,
-                            config.EMAILJS_PUBLIC_KEY // Add public key here explicitly
-                        );
-                        console.log('Email sent successfully:', emailResponse);
-                    } catch (emailError) {
-                        console.error('Email sending failed:', {
-                            error: emailError,
-                            params: {
-                                serviceId: config.EMAILJS_SERVICE_ID,
-                                templateId: config.EMAILJS_TEMPLATE_ID,
-                                hasPublicKey: !!config.EMAILJS_PUBLIC_KEY
-                            }
+                        // Continue with your existing process
+                        showMembershipModal('Processing your application...');
+                        
+                        // Format date once at the beginning
+                        const rawDate = new Date(form.dataDiNascita.value);
+                        const formattedDateDisplay = rawDate.toLocaleDateString('it-IT', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
                         });
-                        throw new Error(`Email sending failed: ${emailError.message || JSON.stringify(emailError)}`);
-                    }
+                        const contentfulDate = rawDate.toISOString().split('T')[0]; // YYYY-MM-DD for Contentful
 
-                    // 6. Send data to Contentful
-                    console.log('Attempting to create Contentful entry...');
-                    
-                    console.log('Contentful payload:', formData); // Debug log
-
-                    const createResponse = await fetch(
-                        `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries`,
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
-                                'Content-Type': 'application/json',
-                                'X-Contentful-Content-Type': 'membership'
-                            },
-                            body: JSON.stringify(formData)
-                        }
-                    );
-
-                    if (!createResponse.ok) {
-                        const errorData = await createResponse.json();
-                        console.error('Contentful error details:', errorData);
-                        throw new Error(`Contentful entry creation failed: ${errorData.message || JSON.stringify(errorData)}`);
-                    }
-
-                    const entry = await createResponse.json();
-                    console.log('Contentful entry created successfully:', entry);
-
-                    // Publish the entry
-                    try {
-                        const publishResponse = await fetch(
-                            `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries/${entry.sys.id}/published`,
-                            {
-                                method: 'PUT',
-                                headers: {
-                                    'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
-                                    'X-Contentful-Version': entry.sys.version
+                        // 1. Collect form data with formatted date
+                        const formData = {
+                            fields: {
+                                email: {
+                                    'en-US': form.email.value
+                                },
+                                nomeECognome: {
+                                    'en-US': form.nomeECognome.value
+                                },
+                                cittaEProvinciaDiNascita: {
+                                    'en-US': form.cittaEProvinciaDiNascita.value
+                                },
+                                dataDiNascita: {
+                                    'en-US': contentfulDate  // Use ISO format for Contentful
+                                },
+                                indirizzoEComuneDiResidenza: {
+                                    'en-US': form.indirizzoEComuneDiResidenza.value
+                                },
+                                codicefiscale: {
+                                    'en-US': form.codicefiscale.value
                                 }
                             }
-                        );
+                        };
+                        
+                        
 
-                        if (!publishResponse.ok) {
-                            const publishErrorData = await publishResponse.json();
-                            console.error('Contentful publish error details:', publishErrorData);
-                            throw new Error(`Contentful entry publishing failed: ${publishErrorData.message || JSON.stringify(publishErrorData)}`);
+
+                        // 2. Generate QR Code
+                        const qrCodeURL = await generateQRCode(formData);
+
+                        // 3. Generate PDF
+                        const { blob: pdfBlob, pdfBase64 } = await generatePDF(formData, qrCodeURL);
+                        const fileName = `membership_${formData.fields.nomeECognome['en-US'].replace(/\s+/g, '_')}.pdf`;
+
+                        // 4. Download PDF locally
+                        await downloadPDF(pdfBlob, fileName);
+
+                        // Ensure EmailJS is initialized before sending
+                        if (!emailjsInitialized) {
+                            console.log('Initializing EmailJS...');
+                            await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
+                        }
+                        
+                        // 5. Send email with PDF attachment
+                        console.log('Attempting to send email...', {
+                            serviceId: config.EMAILJS_SERVICE_ID,
+                            templateId: config.EMAILJS_TEMPLATE_ID,
+                            hasPublicKey: !!config.EMAILJS_PUBLIC_KEY
+                        });
+
+                        const emailParams = {
+                            to_email: form.email.value,
+                            to_name: form.nomeECognome.value,
+                            message: "Thank you for your membership application!",
+                            pdf_attachment: pdfBase64.split(',')[1],
+                            logo1_url: 'https://images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a6953b67c75b74c520d657b951253/logo_1.png',
+                            logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
+                        };
+
+                        try {
+                            // Add a small delay before sending (sometimes helps with mobile)
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            
+                            const emailResponse = await emailjs.send(
+                                config.EMAILJS_SERVICE_ID,
+                                config.EMAILJS_TEMPLATE_ID,
+                                emailParams,
+                                config.EMAILJS_PUBLIC_KEY // Add public key here explicitly
+                            );
+                            console.log('Email sent successfully:', emailResponse);
+                        } catch (emailError) {
+                            console.error('Email sending failed:', {
+                                error: emailError,
+                                params: {
+                                    serviceId: config.EMAILJS_SERVICE_ID,
+                                    templateId: config.EMAILJS_TEMPLATE_ID,
+                                    hasPublicKey: !!config.EMAILJS_PUBLIC_KEY
+                                }
+                            });
+                            throw new Error(`Email sending failed: ${emailError.message || JSON.stringify(emailError)}`);
                         }
 
-                        console.log('Contentful entry published successfully');
+                        // 6. Send data to Contentful
+                        console.log('Attempting to create Contentful entry...');
                         
-                        // Clear form and show success message
-                        form.reset();
-                        showMembershipModal('Thank you! Your membership application has been submitted successfully and sent to your email.');
+                        console.log('Contentful payload:', formData); // Debug log
 
-                    } catch (publishError) {
-                        console.error('Publishing error:', publishError);
-                        throw new Error(`Entry publishing failed: ${publishError.message}`);
+                        const createResponse = await fetch(
+                            `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
+                                    'Content-Type': 'application/json',
+                                    'X-Contentful-Content-Type': 'membership'
+                                },
+                                body: JSON.stringify(formData)
+                            }
+                        );
+
+                        if (!createResponse.ok) {
+                            const errorData = await createResponse.json();
+                            console.error('Contentful error details:', errorData);
+                            throw new Error(`Contentful entry creation failed: ${errorData.message || JSON.stringify(errorData)}`);
+                        }
+
+                        const entry = await createResponse.json();
+                        console.log('Contentful entry created successfully:', entry);
+
+                        // Publish the entry
+                        try {
+                            const publishResponse = await fetch(
+                                `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries/${entry.sys.id}/published`,
+                                {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
+                                        'X-Contentful-Version': entry.sys.version
+                                    }
+                                }
+                            );
+
+                            if (!publishResponse.ok) {
+                                const publishErrorData = await publishResponse.json();
+                                console.error('Contentful publish error details:', publishErrorData);
+                                throw new Error(`Contentful entry publishing failed: ${publishErrorData.message || JSON.stringify(publishErrorData)}`);
+                            }
+
+                            console.log('Contentful entry published successfully');
+                            
+                            // Clear form and show success message
+                            form.reset();
+                            showMembershipModal('Thank you! Your membership application has been submitted successfully and sent to your email.');
+
+                        } catch (publishError) {
+                            console.error('Publishing error:', publishError);
+                            throw new Error(`Entry publishing failed: ${publishError.message}`);
+                        }
+
+                        // Clear stored data after successful processing
+                        sessionStorage.removeItem('membershipFormData');
+                        sessionStorage.removeItem('sumupCheckoutId');
+                    } else if (paymentStatus === 'FAILED') {
+                        throw new Error('Payment was not completed successfully');
                     }
-
                 } else {
-                    // First time submission - create SumUp checkout and redirect
+                    // First time submission - create SumUp checkout
                     showMembershipModal('Redirecting to payment...');
                     
-                    // Collect form data first
+                    // Your existing code for creating checkout...
                     const formData = {
                         fields: {
                             email: { 'en-US': form.email.value },
@@ -460,22 +477,19 @@ document.addEventListener('DOMContentLoaded', async function() {
                         }
                     };
 
-                    // Store form data in sessionStorage for retrieval after payment
+                    // Store form data before redirect
                     sessionStorage.setItem('membershipFormData', JSON.stringify(formData));
-
+                    
                     // Create and redirect to SumUp checkout
                     const checkout = await createSumUpCheckout(formData);
-                    window.location.href = checkout.payment_url;
-                    return;
+                    if (checkout && checkout.payment_url) {
+                        window.location.href = checkout.payment_url;
+                    } else {
+                        throw new Error('Invalid checkout response');
+                    }
                 }
-
             } catch (error) {
-                console.error('Operation failed:', {
-                    message: error.message,
-                    stack: error.stack,
-                    name: error.name,
-                    fullError: JSON.stringify(error, Object.getOwnPropertyNames(error))
-                });
+                console.error('Operation failed:', error);
                 showMembershipModal(`An error occurred: ${error.message}. Please try again.`, true);
             }
         });
