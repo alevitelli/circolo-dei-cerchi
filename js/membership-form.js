@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        amount: 25.00,
+                        amount: 0.50,
                         currency: 'EUR',
                         checkout_reference: `membership-${Date.now()}`,
                         merchant_code: SUMUP_CONFIG.merchant_code,
