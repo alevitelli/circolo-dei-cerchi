@@ -393,27 +393,21 @@ document.addEventListener('DOMContentLoaded', async function() {
                 if (!pdfBase64) {
                     throw new Error('Missing PDF attachment');
                 }
-        
+
                 // Check if EmailJS needs initialization
                 if (!emailjsInitialized) {
                     console.log('Initializing EmailJS...');
                     await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
                 }
-        
+
                 // Clean and validate PDF data
                 const pdfData = pdfBase64.split(',')[1] || pdfBase64;
                 
-                // Log parameters for debugging (excluding PDF content)
-                console.log('Email parameters:', {
-                    to_email: formData.fields.email['en-US'],
-                    to_name: formData.fields.nomeECognome['en-US'],
-                    service_id: config.EMAILJS_SERVICE_ID,
-                    template_id: config.EMAILJS_TEMPLATE_ID,
-                    hasPdfAttachment: !!pdfData,
-                    pdfSize: pdfData.length
-                });
-        
-                // Prepare email parameters
+                console.log('Preparing email with parameters:');
+                console.log('To:', formData.fields.email['en-US']);
+                console.log('Name:', formData.fields.nomeECognome['en-US']);
+                console.log('PDF Size:', pdfData.length);
+
                 const emailParams = {
                     to_email: formData.fields.email['en-US'].trim(),
                     to_name: formData.fields.nomeECognome['en-US'].trim(),
@@ -422,49 +416,32 @@ document.addEventListener('DOMContentLoaded', async function() {
                     logo1_url: 'https://images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a953b67c75b74c520d657b951253/logo_1.png',
                     logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
                 };
-        
-                // Validate all required parameters are present
-                const requiredParams = ['to_email', 'to_name', 'pdf_attachment'];
-                for (const param of requiredParams) {
-                    if (!emailParams[param]) {
-                        throw new Error(`Missing required email parameter: ${param}`);
-                    }
-                }
-        
+
                 console.log('Sending email...');
                 
-                // Add error handling for the send operation
                 try {
-                    const response = await new Promise((resolve, reject) => {
-                        emailjs.send(
-                            config.EMAILJS_SERVICE_ID,
-                            config.EMAILJS_TEMPLATE_ID,
-                            emailParams,
-                            config.EMAILJS_PUBLIC_KEY
-                        ).then(
-                            (response) => resolve(response),
-                            (error) => reject(error)
-                        );
-                    });
-        
-                    console.log('Email sent successfully:', response);
+                    const response = await emailjs.send(
+                        config.EMAILJS_SERVICE_ID,
+                        config.EMAILJS_TEMPLATE_ID,
+                        emailParams,
+                        config.EMAILJS_PUBLIC_KEY
+                    );
+                    
+                    console.log('Email sent successfully. Response:', response);
                     return response;
                 } catch (sendError) {
-                    console.error('EmailJS send error details:', {
-                        error: sendError,
-                        message: sendError.message || 'Unknown error',
-                        status: sendError.status,
-                        text: sendError.text,
-                        name: sendError.name
-                    });
-                    throw new Error(sendError.text || sendError.message || 'Failed to send email');
+                    console.error('EmailJS send error:');
+                    console.error('Message:', sendError.message);
+                    console.error('Status:', sendError.status);
+                    console.error('Text:', sendError.text);
+                    console.error('Name:', sendError.name);
+                    console.error('Stack:', sendError.stack);
+                    throw new Error(`Failed to send email: ${sendError.text || sendError.message}`);
                 }
             } catch (error) {
-                console.error('Email process failed:', {
-                    error: error,
-                    message: error.message,
-                    stack: error.stack
-                });
+                console.error('Email process failed:');
+                console.error('Message:', error.message);
+                console.error('Stack:', error.stack);
                 throw error;
             }
         }
