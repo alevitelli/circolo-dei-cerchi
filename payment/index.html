@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Circolo dei Cerchi</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://gateway.sumup.com/gateway/ecom/card/v2/sdk.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Complete Your Membership Payment</h1>
+        <div id="sumup-card"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const checkoutId = urlParams.get('checkoutId');
+
+            if (!checkoutId) {
+                window.location.href = '/membership';
+                return;
+            }
+
+            SumUpCard.mount({
+                id: 'sumup-card',
+                checkoutId: checkoutId,
+                onResponse: function(type, body) {
+                    console.log('Payment response:', type, body);
+                    if (type === 'success') {
+                        // Redirect back to membership form with success status
+                        window.location.href = `/membership?status=PAID&checkoutId=${checkoutId}`;
+                    } else if (type === 'error' || type === 'fail') {
+                        // Redirect back with error status
+                        window.location.href = `/membership?status=FAILED&checkoutId=${checkoutId}`;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

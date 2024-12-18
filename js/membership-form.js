@@ -246,9 +246,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Add this function to handle SumUp checkout creation
         async function createSumUpCheckout(formData) {
             try {
-                const returnUrl = new URL('/membership', window.location.origin).toString();
+                const returnUrl = new URL('/payment', window.location.origin).toString();
                 
-                // First create the checkout via SumUp's API
                 const response = await fetch('https://api.sumup.com/v0.1/checkouts', {
                     method: 'POST',
                     headers: {
@@ -271,24 +270,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
 
                 const checkout = await response.json();
-                console.log('Checkout response:', checkout);
-
-                if (!checkout.id) {
-                    throw new Error('Invalid checkout response: missing checkout ID');
-                }
-
-                // Construct the payment URL using the checkout ID
-                const paymentUrl = `https://pay.sumup.com/b2c/v1/checkouts/${checkout.id}`;
-                
-                // Store checkout data
-                sessionStorage.setItem('sumupCheckoutId', checkout.id);
-                sessionStorage.setItem('sumupPaymentUrl', paymentUrl);
-
-                return {
-                    ...checkout,
-                    payment_url: paymentUrl
-                };
-
+                return checkout;
             } catch (error) {
                 console.error('SumUp checkout creation failed:', error);
                 throw error;
@@ -304,15 +286,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 
                 if (paymentStatus) {
                     // Handle return from payment
-                    const storedFormData = sessionStorage.getItem('membershipFormData');
-                    if (!storedFormData) {
-                        throw new Error('No stored form data found');
-                    }
-
                     if (paymentStatus === 'PAID') {
-                        // Continue with your existing process
+                        // Continue with existing process (QR code, email, Contentful)
+                        const storedFormData = sessionStorage.getItem('membershipFormData');
+                        if (!storedFormData) {
+                            throw new Error('No stored form data found');
+                        }
                         formData = JSON.parse(storedFormData);
-                        showMembershipModal('Processing your application...');
                         
                         // Format date once at the beginning
                         const rawDate = new Date(form.dataDiNascita.value);
@@ -466,9 +446,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                     }
                 } else {
                     // First time submission - create SumUp checkout
-                    showMembershipModal('Redirecting to payment...');
+                    showMembershipModal('Creating payment session...');
                     
-                    // Your existing code for creating checkout...
+                    // Store form data
                     const formData = {
                         fields: {
                             email: { 'en-US': form.email.value },
@@ -483,14 +463,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                     // Store form data before redirect
                     sessionStorage.setItem('membershipFormData', JSON.stringify(formData));
                     
-                    // Create and redirect to SumUp checkout
+                    // Create checkout
                     const checkout = await createSumUpCheckout(formData);
-                    if (checkout && checkout.payment_url) {
-                        console.log('Redirecting to payment:', checkout.payment_url);
-                        window.location.href = checkout.payment_url;
-                    } else {
-                        throw new Error('Invalid checkout response');
-                    }
+                    
+                    // Redirect to payment page
+                    window.location.href = `/payment?checkoutId=${checkout.id}`;
                 }
             } catch (error) {
                 console.error('Operation failed:', error);
