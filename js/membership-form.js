@@ -242,13 +242,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             showMembershipModal('Processing your application...');
             
             try {
-                // Format the date to DD/MM/YYYY regardless of input format
+                // Format date once at the beginning
                 const rawDate = new Date(form.dataDiNascita.value);
-                const formattedDate = rawDate.toLocaleDateString('it-IT', {
+                const formattedDateDisplay = rawDate.toLocaleDateString('it-IT', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric'
                 });
+                const contentfulDate = rawDate.toISOString().split('T')[0]; // YYYY-MM-DD for Contentful
 
                 // 1. Collect form data with formatted date
                 const formData = {
@@ -263,7 +264,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             'en-US': form.cittaEProvinciaDiNascita.value
                         },
                         dataDiNascita: {
-                            'en-US': formattedDate // Use formatted date here
+                            'en-US': contentfulDate  // Use ISO format for Contentful
                         },
                         indirizzoEComuneDiResidenza: {
                             'en-US': form.indirizzoEComuneDiResidenza.value
@@ -332,33 +333,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 // 6. Send data to Contentful
                 console.log('Attempting to create Contentful entry...');
                 
-                // Format date specifically for Contentful (YYYY-MM-DD)
-                const rawDate = new Date(form.dataDiNascita.value);
-                const contentfulDate = rawDate.toISOString().split('T')[0]; // This will give YYYY-MM-DD
-
-                const formData = {
-                    fields: {
-                        email: {
-                            'en-US': form.email.value
-                        },
-                        nomeECognome: {
-                            'en-US': form.nomeECognome.value
-                        },
-                        cittaEProvinciaDiNascita: {
-                            'en-US': form.cittaEProvinciaDiNascita.value
-                        },
-                        dataDiNascita: {
-                            'en-US': contentfulDate  // Use ISO format for Contentful
-                        },
-                        indirizzoEComuneDiResidenza: {
-                            'en-US': form.indirizzoEComuneDiResidenza.value
-                        },
-                        codicefiscale: {
-                            'en-US': form.codicefiscale.value
-                        }
-                    }
-                };
-
                 console.log('Contentful payload:', formData); // Debug log
 
                 const createResponse = await fetch(
