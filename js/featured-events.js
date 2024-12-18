@@ -105,7 +105,7 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
             <div class="event-content">
                 <div class="event-meta">
                     ${event.fields.venue ? `<span class="venue">${event.fields.venue}</span>` : ''}
-                    ${event.fields.venue ? '<span class="divider"> • </span>' : ''}
+                    ${event.fields.venue ? '<span class="divider">   •   </span>' : ''}
                     <span class="date">${formattedDate}</span>
                 </div>
                 <h2 class="event-title">
