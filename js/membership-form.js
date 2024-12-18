@@ -246,47 +246,52 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Add this function to handle SumUp checkout creation
         async function createSumUpCheckout(formData) {
             try {
-                // Create a proper return URL that points to your membership page
                 const returnUrl = new URL('/membership', window.location.origin).toString();
                 
+                const checkoutData = {
+                    merchant_code: SUMUP_CONFIG.merchant_code,
+                    amount: 25.00,
+                    currency: 'EUR',
+                    checkout_reference: `membership-${Date.now()}`,
+                    description: 'Circolo dei Cerchi Membership Fee',
+                    return_url: returnUrl,
+                    customer_email: formData.fields.email['en-US']
+                };
+        
+                console.log('Creating checkout with data:', checkoutData);
+        
                 const response = await fetch(`${SUMUP_API_URL}/v0.1/checkouts`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${SUMUP_CONFIG.access_token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        merchant_code: SUMUP_CONFIG.merchant_code,
-                        amount: 25.00,
-                        currency: 'EUR',
-                        checkout_reference: `membership-${Date.now()}`,
-                        description: 'Circolo dei Cerchi Membership Fee',
-                        return_url: returnUrl,
-                        customer_email: formData.fields.email['en-US'],
-                        redirect: {
-                            success_url: returnUrl + '?status=PAID',
-                            failure_url: returnUrl + '?status=FAILED'
-                        }
-                    })
+                    body: JSON.stringify(checkoutData)
                 });
-
+        
                 if (!response.ok) {
                     const errorData = await response.json();
                     console.error('SumUp API error:', errorData);
                     throw new Error(`Failed to create SumUp checkout: ${errorData.message || 'Unknown error'}`);
                 }
-
-                const checkoutData = await response.json();
-                console.log('SumUp checkout created:', checkoutData);
-                
-                // Store the checkout ID for verification later
-                sessionStorage.setItem('sumupCheckoutId', checkoutData.id);
-                
-                return checkoutData;
-
+        
+                const checkout = await response.json();
+                console.log('Checkout response:', checkout);
+        
+                if (!checkout.id || !checkout.payment_url) {
+                    console.error('Invalid checkout response:', checkout);
+                    throw new Error('Invalid checkout response from SumUp');
+                }
+        
+                // Store checkout data
+                sessionStorage.setItem('sumupCheckoutId', checkout.id);
+                sessionStorage.setItem('sumupPaymentUrl', checkout.payment_url);
+        
+                return checkout;
+        
             } catch (error) {
                 console.error('SumUp checkout creation failed:', error);
-                throw new Error(`Payment initialization failed: ${error.message}`);
+                throw error;
             }
         }
 
@@ -296,15 +301,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const paymentStatus = urlParams.get('status');
-                const storedFormData = sessionStorage.getItem('membershipFormData');
                 
-                // If returning from payment
                 if (paymentStatus) {
-                    if (paymentStatus === 'PAID' && storedFormData) {
-                        // Retrieve stored form data
-                        formData = JSON.parse(storedFormData);
-                        
+                    // Handle return from payment
+                    const storedFormData = sessionStorage.getItem('membershipFormData');
+                    if (!storedFormData) {
+                        throw new Error('No stored form data found');
+                    }
+
+                    if (paymentStatus === 'PAID') {
                         // Continue with your existing process
+                        formData = JSON.parse(storedFormData);
                         showMembershipModal('Processing your application...');
                         
                         // Format date once at the beginning
@@ -339,10 +346,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 }
                             }
                         };
-                        
-                        
-
-
                         // 2. Generate QR Code
                         const qrCodeURL = await generateQRCode(formData);
 
@@ -483,6 +486,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     // Create and redirect to SumUp checkout
                     const checkout = await createSumUpCheckout(formData);
                     if (checkout && checkout.payment_url) {
+                        console.log('Redirecting to payment:', checkout.payment_url);
                         window.location.href = checkout.payment_url;
                     } else {
                         throw new Error('Invalid checkout response');
