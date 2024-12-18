@@ -35,24 +35,30 @@ async function initContentful() {
 async function loadGalleryImages() {
     try {
         console.log('Fetching gallery images...');
-        const response = await client.getEntries({
-            content_type: 'gallery',
-            select: 'fields.image,fields.description,fields.order',
-            order: 'fields.order'
-        });
+        const response = await client.getAssets();
 
-        console.log(`Received ${response.items.length} images`);
+        // Filter assets that have the "gallery" tag
+        const galleryImages = response.items.filter(asset => 
+            asset.metadata?.tags?.some(tag => tag.sys.id === 'gallery')
+        );
+
+        console.log(`Received ${galleryImages.length} gallery images`);
         
         const galleryContainer = document.querySelector('.gallery');
-        galleryContainer.innerHTML = response.items.map(image => {
-            if (!image.fields.image || !image.fields.image.fields || !image.fields.image.fields.file) {
+        galleryContainer.innerHTML = galleryImages.map(image => {
+            if (!image.fields?.file?.url) {
                 console.warn('Invalid image data:', image);
                 return '';
             }
             
+            // Add https: to the URL if it starts with //
+            const imageUrl = image.fields.file.url.startsWith('//') 
+                ? 'https:' + image.fields.file.url 
+                : image.fields.file.url;
+            
             return `
-                <img src="${image.fields.image.fields.file.url}" 
-                     alt="${image.fields.description || 'Circolo dei Cerchi venue'}" 
+                <img src="${imageUrl}" 
+                     alt="${image.fields.title || 'Circolo dei Cerchi venue'}" 
                      class="gallery-img">
             `;
         }).join('');
