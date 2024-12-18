@@ -248,53 +248,47 @@ document.addEventListener('DOMContentLoaded', async function() {
             try {
                 const returnUrl = new URL('/membership', window.location.origin).toString();
                 
-                const checkoutData = {
-                    merchant_code: SUMUP_CONFIG.merchant_code,
-                    amount: 25.00,
-                    currency: 'EUR',
-                    checkout_reference: `membership-${Date.now()}`,
-                    description: 'Circolo dei Cerchi Membership Fee',
-                    return_url: returnUrl,
-                    customer_email: formData.fields.email['en-US']
-                };
-        
-                console.log('Creating checkout with data:', checkoutData);
-        
-                const response = await fetch(`${SUMUP_API_URL}/v0.1/checkouts`, {
+                // First create the checkout via SumUp's API
+                const response = await fetch('https://api.sumup.com/v0.1/checkouts', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${SUMUP_CONFIG.access_token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(checkoutData)
+                    body: JSON.stringify({
+                        amount: 25.00,
+                        currency: 'EUR',
+                        checkout_reference: `membership-${Date.now()}`,
+                        merchant_code: SUMUP_CONFIG.merchant_code,
+                        description: 'Circolo dei Cerchi Membership Fee',
+                        return_url: returnUrl,
+                        pay_to_email: 'circolodeicerchi@gmail.com'
+                    })
                 });
-        
+
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('SumUp API error:', errorData);
-                    throw new Error(`Failed to create SumUp checkout: ${errorData.message || 'Unknown error'}`);
+                    throw new Error(`SumUp API error: ${response.status}`);
                 }
-        
+
                 const checkout = await response.json();
                 console.log('Checkout response:', checkout);
-        
+
                 if (!checkout.id) {
-                    console.error('Invalid checkout response:', checkout);
-                    throw new Error('Invalid checkout response from SumUp');
+                    throw new Error('Invalid checkout response: missing checkout ID');
                 }
-        
+
                 // Construct the payment URL using the checkout ID
-                const paymentUrl = `https://pay.sumup.com/b2c/v1/checkout?checkoutId=${checkout.id}`;
-        
+                const paymentUrl = `https://pay.sumup.com/b2c/v1/checkouts/${checkout.id}`;
+                
                 // Store checkout data
                 sessionStorage.setItem('sumupCheckoutId', checkout.id);
                 sessionStorage.setItem('sumupPaymentUrl', paymentUrl);
-        
+
                 return {
                     ...checkout,
                     payment_url: paymentUrl
                 };
-        
+
             } catch (error) {
                 console.error('SumUp checkout creation failed:', error);
                 throw error;
