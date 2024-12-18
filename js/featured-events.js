@@ -87,13 +87,15 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
         : '';
     
     // Format the date
-    const date = new Date(event.fields.eventDate);
-    const formattedDate = date.toLocaleDateString('it-IT', {
-        weekday: 'short',
-        day: '2-digit',
-        month: '2-digit',
-        year: '2-digit'
-    }).toUpperCase();
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('it-IT', {
+            weekday: 'short',
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        }).toUpperCase();
+    }
 
     // Create the HTML with the original structure
     const html = `
@@ -105,14 +107,16 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
             <div class="event-content">
                 <div class="event-meta">
                     ${event.fields.venue ? `<span class="venue">${event.fields.venue}</span>` : ''}
-                    ${event.fields.venue ? '<span class="divider">   •   </span>' : ''}
-                    <span class="date">${formattedDate}</span>
+                    <span class="divider">•</span>
+                    <span class="date">${formatDate(event.fields.eventDate)}</span>
+                    <span class="divider">•</span>
+                    ${event.fields.eventTime ? `<span class="time">${event.fields.eventTime}</span>` : ''}
                 </div>
                 <h2 class="event-title">
-                    <a href="/event.html?id=${event.sys.id}">${event.fields.eventName}</a>
+                    <a href="/event?id=${event.sys.id}">${event.fields.eventName}</a>
                 </h2>
                 ${event.fields.eventDetail ? `<p class="event-detail">${event.fields.eventDetail}</p>` : ''}
-                <a href="/event.html?id=${event.sys.id}" class="cta-button">More Info</a>
+                <a href="/event?id=${event.sys.id}" class="cta-button">More Info</a>
             </div>
         </div>
     `;
