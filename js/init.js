@@ -17,7 +17,11 @@ async function initConfig() {
     
     window.CONFIG = {
       CONTENTFUL_SPACE_ID: config.CONTENTFUL_SPACE_ID,
-      CONTENTFUL_ACCESS_TOKEN: config.CONTENTFUL_ACCESS_TOKEN
+      CONTENTFUL_ACCESS_TOKEN: config.CONTENTFUL_ACCESS_TOKEN,
+      EMAILJS_PUBLIC_KEY: config.EMAILJS_PUBLIC_KEY,
+      EMAILJS_SERVICE_ID: config.EMAILJS_SERVICE_ID,
+      EMAILJS_TEMPLATE_ID: config.EMAILJS_TEMPLATE_ID,
+
     };
     
     console.log('Configuration loaded and verified:', window.CONFIG);
