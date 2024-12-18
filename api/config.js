@@ -1,7 +1,7 @@
 module.exports = (req, res) => {
   // Add CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Methods', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // Log the environment variables (safely)
@@ -11,7 +11,9 @@ module.exports = (req, res) => {
     hasManagementToken: !!process.env.CONTENTFUL_MANAGEMENT_TOKEN,
     hasEmailJsPublicKey: !!process.env.EMAILJS_PUBLIC_KEY,
     hasServiceId: !!process.env.EMAILJS_SERVICE_ID,
-    hasTemplateId: !!process.env.EMAILJS_TEMPLATE_ID
+    hasTemplateId: !!process.env.EMAILJS_TEMPLATE_ID,
+    hasSumupMerchantCode: !!process.env.SUMUP_MERCHANT_CODE,
+    hasSumupAccessToken: !!process.env.SUMUP_ACCESS_TOKEN
   });
 
   const config = {
@@ -20,7 +22,9 @@ module.exports = (req, res) => {
     CONTENTFUL_MANAGEMENT_TOKEN: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
     EMAILJS_PUBLIC_KEY: process.env.EMAILJS_PUBLIC_KEY,
     EMAILJS_SERVICE_ID: process.env.EMAILJS_SERVICE_ID,
-    EMAILJS_TEMPLATE_ID: process.env.EMAILJS_TEMPLATE_ID
+    EMAILJS_TEMPLATE_ID: process.env.EMAILJS_TEMPLATE_ID,
+    SUMUP_MERCHANT_CODE: process.env.SUMUP_MERCHANT_CODE,
+    SUMUP_ACCESS_TOKEN: process.env.SUMUP_ACCESS_TOKEN
   };
 
   // Verify config before sending
@@ -29,7 +33,9 @@ module.exports = (req, res) => {
       !config.CONTENTFUL_MANAGEMENT_TOKEN ||
       !config.EMAILJS_PUBLIC_KEY ||
       !config.EMAILJS_SERVICE_ID ||
-      !config.EMAILJS_TEMPLATE_ID) {
+      !config.EMAILJS_TEMPLATE_ID ||
+      !config.SUMUP_MERCHANT_CODE ||
+      !config.SUMUP_ACCESS_TOKEN) {
     return res.status(500).json({ error: 'Missing required configuration' });
   }
 
