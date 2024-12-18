@@ -331,62 +331,82 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                 // 6. Send data to Contentful
                 console.log('Attempting to create Contentful entry...');
+                
+                // Format date specifically for Contentful (YYYY-MM-DD)
+                const rawDate = new Date(form.dataDiNascita.value);
+                const contentfulDate = rawDate.toISOString().split('T')[0]; // This will give YYYY-MM-DD
+
+                const formData = {
+                    fields: {
+                        email: {
+                            'en-US': form.email.value
+                        },
+                        nomeECognome: {
+                            'en-US': form.nomeECognome.value
+                        },
+                        cittaEProvinciaDiNascita: {
+                            'en-US': form.cittaEProvinciaDiNascita.value
+                        },
+                        dataDiNascita: {
+                            'en-US': contentfulDate  // Use ISO format for Contentful
+                        },
+                        indirizzoEComuneDiResidenza: {
+                            'en-US': form.indirizzoEComuneDiResidenza.value
+                        },
+                        codicefiscale: {
+                            'en-US': form.codicefiscale.value
+                        }
+                    }
+                };
+
+                console.log('Contentful payload:', formData); // Debug log
+
+                const createResponse = await fetch(
+                    `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
+                            'Content-Type': 'application/json',
+                            'X-Contentful-Content-Type': 'membership'
+                        },
+                        body: JSON.stringify(formData)
+                    }
+                );
+
+                if (!createResponse.ok) {
+                    const errorData = await createResponse.json();
+                    console.error('Contentful error details:', errorData);
+                    throw new Error(`Contentful entry creation failed: ${errorData.message || JSON.stringify(errorData)}`);
+                }
+
+                const entry = await createResponse.json();
+                console.log('Contentful entry created successfully:', entry);
+
+                // Publish the entry
                 try {
-                    const createResponse = await fetch(
-                        `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries`,
+                    const publishResponse = await fetch(
+                        `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries/${entry.sys.id}/published`,
                         {
-                            method: 'POST',
+                            method: 'PUT',
                             headers: {
                                 'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
-                                'Content-Type': 'application/json',
-                                'X-Contentful-Content-Type': 'membership'
-                            },
-                            body: JSON.stringify(formData)
+                                'X-Contentful-Version': entry.sys.version
+                            }
                         }
                     );
 
-                    if (!createResponse.ok) {
-                        const errorData = await createResponse.json();
-                        console.error('Contentful error details:', errorData);
-                        throw new Error(`Contentful entry creation failed: ${errorData.message || JSON.stringify(errorData)}`);
+                    if (!publishResponse.ok) {
+                        const publishErrorData = await publishResponse.json();
+                        console.error('Contentful publish error details:', publishErrorData);
+                        throw new Error(`Contentful entry publishing failed: ${publishErrorData.message || JSON.stringify(publishErrorData)}`);
                     }
 
-                    const entry = await createResponse.json();
-                    console.log('Contentful entry created successfully:', entry);
-
-                    // Publish the entry
-                    try {
-                        const publishResponse = await fetch(
-                            `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries/${entry.sys.id}/published`,
-                            {
-                                method: 'PUT',
-                                headers: {
-                                    'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
-                                    'X-Contentful-Version': entry.sys.version
-                                }
-                            }
-                        );
-
-                        if (!publishResponse.ok) {
-                            const publishErrorData = await publishResponse.json();
-                            console.error('Contentful publish error details:', publishErrorData);
-                            throw new Error(`Contentful entry publishing failed: ${publishErrorData.message || JSON.stringify(publishErrorData)}`);
-                        }
-
-                        console.log('Contentful entry published successfully');
-                    } catch (publishError) {
-                        console.error('Publishing error:', publishError);
-                        throw new Error(`Entry publishing failed: ${publishError.message}`);
-                    }
-
-                } catch (contentfulError) {
-                    console.error('Contentful error:', contentfulError);
-                    throw new Error(`Contentful operation failed: ${contentfulError.message}`);
+                    console.log('Contentful entry published successfully');
+                } catch (publishError) {
+                    console.error('Publishing error:', publishError);
+                    throw new Error(`Entry publishing failed: ${publishError.message}`);
                 }
-
-                // Clear form and show success message
-                form.reset();
-                showMembershipModal('Thank you! Your membership application has been submitted and sent to your email.');
 
             } catch (error) {
                 console.error('Operation failed:', {
