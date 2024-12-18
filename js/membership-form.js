@@ -228,8 +228,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             try {
                 // Format the date using our new helper function
-                const formattedDate = parseAndFormatDate(form.dataDiNascita.value);
-
+                const rawDate = form.dataDiNascita.value;
+                console.log('Raw date:', rawDate);
+                const formattedDate = parseAndFormatDate(rawDate);
+                console.log('Formatted date:', formattedDate);
+                
+                // Show debug info in modal
+                showMembershipModal(`Processing... Raw date: ${rawDate}, Formatted: ${formattedDate}`);
+                
+                // 1. Collect form data with formatted date
                 const formData = {
                     fields: {
                         email: {
@@ -242,7 +249,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             'en-US': form.cittaEProvinciaDiNascita.value
                         },
                         dataDiNascita: {
-                            'en-US': formattedDate
+                            'en-US': formattedDate // Use formatted date here
                         },
                         indirizzoEComuneDiResidenza: {
                             'en-US': form.indirizzoEComuneDiResidenza.value
