@@ -16,7 +16,9 @@ async function initConfig() {
         !config.CONTENTFUL_MANAGEMENT_TOKEN ||
         !config.EMAILJS_PUBLIC_KEY ||
         !config.EMAILJS_SERVICE_ID ||
-        !config.EMAILJS_TEMPLATE_ID) {
+        !config.EMAILJS_TEMPLATE_ID ||
+        !config.SUMUP_MERCHANT_CODE ||
+        !config.SUMUP_ACCESS_TOKEN) {
       throw new Error('Configuration is missing required properties');
     }
     
