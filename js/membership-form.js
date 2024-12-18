@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const checkout = await createSumUpCheckout(formData);
 
                 // 5. Redirect to payment page
-                window.location.href = `/payment.html?checkoutId=${checkout.id}`;
+                window.location.href = `/payment?checkoutId=${checkout.id}`;
 
             } catch (error) {
                 console.error('Form submission failed:', error);
