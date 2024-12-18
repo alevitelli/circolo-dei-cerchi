@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const ENVIRONMENT_ID = 'master';
 
         // Add these constants near the top after other configurations
-        const SUMUP_API_URL = 'https://api.sumup.com/v0.1';
+        const SUMUP_API_URL = 'https://api.sumup.com';
         const SUMUP_CONFIG = {
             merchant_code: config.SUMUP_MERCHANT_CODE,
             access_token: config.SUMUP_ACCESS_TOKEN
@@ -245,30 +245,37 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Add this function to handle SumUp checkout creation
         async function createSumUpCheckout(formData) {
-            const checkoutData = {
-                merchant_code: SUMUP_CONFIG.merchant_code,
-                amount: 25.00, // Set your membership fee amount
-                currency: 'EUR',
-                checkout_reference: `membership-${Date.now()}`,
-                description: 'Circolo dei Cerchi Membership Fee',
-                return_url: window.location.origin + '/membership',
-                customer_email: formData.fields.email['en-US']
-            };
+            try {
+                const response = await fetch(`${SUMUP_API_URL}/v0.1/checkouts`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${SUMUP_CONFIG.access_token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        merchant_code: SUMUP_CONFIG.merchant_code,
+                        amount: 5.00, // Set your membership fee amount
+                        currency: 'EUR',
+                        checkout_reference: `membership-${Date.now()}`,
+                        description: 'Tessera Circolo dei Cerchi',
+                        return_url: `${window.location.origin}/membership?payment_status=success`,
+                        customer_email: formData.fields.email['en-US']
+                    })
+                });
 
-            const response = await fetch(`${SUMUP_API_URL}/checkouts`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${SUMUP_CONFIG.access_token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(checkoutData)
-            });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Failed to create SumUp checkout: ${errorData.message || 'Unknown error'}`);
+                }
 
-            if (!response.ok) {
-                throw new Error('Failed to create SumUp checkout');
+                const checkoutData = await response.json();
+                console.log('SumUp checkout created:', checkoutData);
+                return checkoutData;
+
+            } catch (error) {
+                console.error('SumUp checkout creation failed:', error);
+                throw new Error(`Payment initialization failed: ${error.message}`);
             }
-
-            return await response.json();
         }
 
         form.addEventListener('submit', async function(e) {
