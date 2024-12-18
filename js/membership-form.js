@@ -221,6 +221,21 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
 
+        // At the top of your file, after the initial declarations
+        let emailjsInitialized = false;
+
+        // Create a function to initialize EmailJS
+        async function initializeEmailJS(publicKey) {
+            try {
+                await emailjs.init(publicKey);
+                emailjsInitialized = true;
+                console.log('EmailJS initialized successfully');
+            } catch (error) {
+                console.error('EmailJS initialization failed:', error);
+                throw new Error('Failed to initialize email service');
+            }
+        }
+
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -269,8 +284,19 @@ document.addEventListener('DOMContentLoaded', async function() {
                 // 4. Download PDF locally
                 await downloadPDF(pdfBlob, fileName);
 
+                // Ensure EmailJS is initialized before sending
+                if (!emailjsInitialized) {
+                    console.log('Initializing EmailJS...');
+                    await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
+                }
+                
                 // 5. Send email with PDF attachment
-                console.log('Attempting to send email...');
+                console.log('Attempting to send email...', {
+                    serviceId: config.EMAILJS_SERVICE_ID,
+                    templateId: config.EMAILJS_TEMPLATE_ID,
+                    hasPublicKey: !!config.EMAILJS_PUBLIC_KEY
+                });
+
                 const emailParams = {
                     to_email: form.email.value,
                     to_name: form.nomeECognome.value,
@@ -281,14 +307,25 @@ document.addEventListener('DOMContentLoaded', async function() {
                 };
 
                 try {
+                    // Add a small delay before sending (sometimes helps with mobile)
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
                     const emailResponse = await emailjs.send(
                         config.EMAILJS_SERVICE_ID,
                         config.EMAILJS_TEMPLATE_ID,
-                        emailParams
+                        emailParams,
+                        config.EMAILJS_PUBLIC_KEY // Add public key here explicitly
                     );
                     console.log('Email sent successfully:', emailResponse);
                 } catch (emailError) {
-                    console.error('Email sending failed:', emailError);
+                    console.error('Email sending failed:', {
+                        error: emailError,
+                        params: {
+                            serviceId: config.EMAILJS_SERVICE_ID,
+                            templateId: config.EMAILJS_TEMPLATE_ID,
+                            hasPublicKey: !!config.EMAILJS_PUBLIC_KEY
+                        }
+                    });
                     throw new Error(`Email sending failed: ${emailError.message || JSON.stringify(emailError)}`);
                 }
 
