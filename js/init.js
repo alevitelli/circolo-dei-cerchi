@@ -27,8 +27,8 @@ async function initConfig() {
       EMAILJS_PUBLIC_KEY: config.EMAILJS_PUBLIC_KEY,
       EMAILJS_SERVICE_ID: config.EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID: config.EMAILJS_TEMPLATE_ID,
-      SUMUP_MERCHANT_CODE: 'MD73PEXF',
-      SUMUP_ACCESS_TOKEN: 'sup_sk_iPAkA4jRrJKDQSkJjfiE0DjahirdaOtHA'
+      SUMUP_MERCHANT_CODE: config.SUMUP_MERCHANT_CODE,
+      SUMUP_ACCESS_TOKEN: config.SUMUP_ACCESS_TOKEN
     };
     
     console.log('Configuration loaded and verified:', window.CONFIG);
