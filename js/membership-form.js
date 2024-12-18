@@ -377,6 +377,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                     }
 
                     console.log('Contentful entry published successfully');
+                    
+                    // Clear form and show success message
+                    form.reset();
+                    showMembershipModal('Thank you! Your membership application has been submitted successfully and sent to your email.');
+
                 } catch (publishError) {
                     console.error('Publishing error:', publishError);
                     throw new Error(`Entry publishing failed: ${publishError.message}`);
