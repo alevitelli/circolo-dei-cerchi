@@ -234,12 +234,26 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Create a function to initialize EmailJS
         async function initializeEmailJS(publicKey) {
             try {
-                await emailjs.init(publicKey);
+                if (!publicKey) {
+                    throw new Error('EmailJS public key is missing');
+                }
+                
+                // Add a timeout to the initialization
+                const initPromise = emailjs.init(publicKey);
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('EmailJS initialization timed out')), 10000);
+                });
+
+                await Promise.race([initPromise, timeoutPromise]);
                 emailjsInitialized = true;
                 console.log('EmailJS initialized successfully');
             } catch (error) {
-                console.error('EmailJS initialization failed:', error);
-                throw new Error('Failed to initialize email service');
+                console.error('EmailJS initialization failed:', {
+                    error: error,
+                    message: error.message,
+                    stack: error.stack
+                });
+                throw new Error(`Failed to initialize email service: ${error.message}`);
             }
         }
 
@@ -360,25 +374,69 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         async function sendConfirmationEmail(formData, pdfBase64) {
-            if (!emailjsInitialized) {
-                await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
+            try {
+                console.log('Starting email process...');
+                
+                // Check if EmailJS needs initialization
+                if (!emailjsInitialized) {
+                    console.log('Initializing EmailJS...');
+                    try {
+                        await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
+                        console.log('EmailJS initialized successfully');
+                    } catch (initError) {
+                        console.error('EmailJS initialization error:', initError);
+                        throw new Error(`Email service initialization failed: ${initError.message}`);
+                    }
+                }
+
+                // Log email parameters (excluding the PDF attachment for clarity)
+                console.log('Preparing email parameters:', {
+                    to_email: formData.fields.email['en-US'],
+                    to_name: formData.fields.nomeECognome['en-US'],
+                    service_id: config.EMAILJS_SERVICE_ID,
+                    template_id: config.EMAILJS_TEMPLATE_ID,
+                    pdf_attachment_size: pdfBase64.length,
+                });
+
+                // Split PDF data to avoid potential size issues
+                const pdfData = pdfBase64.split(',')[1];
+                if (!pdfData) {
+                    throw new Error('Invalid PDF data format');
+                }
+
+                const emailParams = {
+                    to_email: formData.fields.email['en-US'],
+                    to_name: formData.fields.nomeECognome['en-US'],
+                    message: "Thank you for your membership application!",
+                    pdf_attachment: pdfData,
+                    logo1_url: 'https://images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a953b67c75b74c520d657b951253/logo_1.png',
+                    logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
+                };
+
+                console.log('Sending email...');
+                try {
+                    const response = await emailjs.send(
+                        config.EMAILJS_SERVICE_ID,
+                        config.EMAILJS_TEMPLATE_ID,
+                        emailParams,
+                        config.EMAILJS_PUBLIC_KEY
+                    );
+                    console.log('Email sent successfully:', response);
+                    return response;
+                } catch (sendError) {
+                    console.error('EmailJS send error:', {
+                        error: sendError,
+                        message: sendError.message,
+                        stack: sendError.stack,
+                        status: sendError.status,
+                        text: sendError.text
+                    });
+                    throw new Error(`Failed to send email: ${sendError.message}`);
+                }
+            } catch (error) {
+                console.error('Email process failed:', error);
+                throw error;
             }
-
-            const emailParams = {
-                to_email: formData.fields.email['en-US'],
-                to_name: formData.fields.nomeECognome['en-US'],
-                message: "Thank you for your membership application!",
-                pdf_attachment: pdfBase64.split(',')[1],
-                logo1_url: 'https://images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a953b67c75b74c520d657b951253/logo_1.png',
-                logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
-            };
-
-            await emailjs.send(
-                config.EMAILJS_SERVICE_ID,
-                config.EMAILJS_TEMPLATE_ID,
-                emailParams,
-                config.EMAILJS_PUBLIC_KEY
-            );
         }
 
         async function createContentfulEntry(formData) {
