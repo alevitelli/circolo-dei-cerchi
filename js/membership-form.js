@@ -186,7 +186,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             showMembershipModal('Processing your application...');
             
             try {
-                // 1. Collect form data
+                // Format the date to DD/MM/YYYY regardless of input format
+                const rawDate = new Date(form.dataDiNascita.value);
+                const formattedDate = rawDate.toLocaleDateString('it-IT', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+
+                // 1. Collect form data with formatted date
                 const formData = {
                     fields: {
                         email: {
@@ -199,7 +207,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             'en-US': form.cittaEProvinciaDiNascita.value
                         },
                         dataDiNascita: {
-                            'en-US': form.dataDiNascita.value
+                            'en-US': formattedDate // Use formatted date here
                         },
                         indirizzoEComuneDiResidenza: {
                             'en-US': form.indirizzoEComuneDiResidenza.value
