@@ -227,15 +227,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             showMembershipModal('Processing your application...');
             
             try {
-                // Format the date using our new helper function
-                const rawDate = form.dataDiNascita.value;
-                console.log('Raw date:', rawDate);
-                const formattedDate = parseAndFormatDate(rawDate);
-                console.log('Formatted date:', formattedDate);
-                
-                // Show debug info in modal
-                showMembershipModal(`Processing... Raw date: ${rawDate}, Formatted: ${formattedDate}`);
-                
+                // Format the date to DD/MM/YYYY regardless of input format
+                const rawDate = new Date(form.dataDiNascita.value);
+                const formattedDate = rawDate.toLocaleDateString('it-IT', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+
                 // 1. Collect form data with formatted date
                 const formData = {
                     fields: {
@@ -271,6 +270,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 await downloadPDF(pdfBlob, fileName);
 
                 // 5. Send email with PDF attachment
+                console.log('Attempting to send email...');
                 const emailParams = {
                     to_email: form.email.value,
                     to_name: form.nomeECognome.value,
@@ -280,50 +280,71 @@ document.addEventListener('DOMContentLoaded', async function() {
                     logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
                 };
 
-                const emailResponse = await emailjs.send(
-                    config.EMAILJS_SERVICE_ID,
-                    config.EMAILJS_TEMPLATE_ID,
-                    emailParams
-                );
-
-                if (emailResponse.status !== 200) {
-                    throw new Error('Failed to send email');
+                try {
+                    const emailResponse = await emailjs.send(
+                        config.EMAILJS_SERVICE_ID,
+                        config.EMAILJS_TEMPLATE_ID,
+                        emailParams
+                    );
+                    console.log('Email sent successfully:', emailResponse);
+                } catch (emailError) {
+                    console.error('Email sending failed:', emailError);
+                    throw new Error(`Email sending failed: ${emailError.message || JSON.stringify(emailError)}`);
                 }
 
                 // 6. Send data to Contentful
-                const createResponse = await fetch(
-                    `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
-                            'Content-Type': 'application/json',
-                            'X-Contentful-Content-Type': 'membership'
-                        },
-                        body: JSON.stringify(formData)
-                    }
-                );
-
-                if (!createResponse.ok) {
-                    throw new Error('Failed to create entry in Contentful');
-                }
-
-                const entry = await createResponse.json();
-
-                // Publish the Contentful entry
-                const publishResponse = await fetch(
-                    `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries/${entry.sys.id}/published`,
-                    {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
-                            'X-Contentful-Version': entry.sys.version
+                console.log('Attempting to create Contentful entry...');
+                try {
+                    const createResponse = await fetch(
+                        `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
+                                'Content-Type': 'application/json',
+                                'X-Contentful-Content-Type': 'membership'
+                            },
+                            body: JSON.stringify(formData)
                         }
-                    }
-                );
+                    );
 
-                if (!publishResponse.ok) {
-                    throw new Error('Failed to publish entry in Contentful');
+                    if (!createResponse.ok) {
+                        const errorData = await createResponse.json();
+                        console.error('Contentful error details:', errorData);
+                        throw new Error(`Contentful entry creation failed: ${errorData.message || JSON.stringify(errorData)}`);
+                    }
+
+                    const entry = await createResponse.json();
+                    console.log('Contentful entry created successfully:', entry);
+
+                    // Publish the entry
+                    try {
+                        const publishResponse = await fetch(
+                            `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}/entries/${entry.sys.id}/published`,
+                            {
+                                method: 'PUT',
+                                headers: {
+                                    'Authorization': `Bearer ${CONTENTFUL_MANAGEMENT_TOKEN}`,
+                                    'X-Contentful-Version': entry.sys.version
+                                }
+                            }
+                        );
+
+                        if (!publishResponse.ok) {
+                            const publishErrorData = await publishResponse.json();
+                            console.error('Contentful publish error details:', publishErrorData);
+                            throw new Error(`Contentful entry publishing failed: ${publishErrorData.message || JSON.stringify(publishErrorData)}`);
+                        }
+
+                        console.log('Contentful entry published successfully');
+                    } catch (publishError) {
+                        console.error('Publishing error:', publishError);
+                        throw new Error(`Entry publishing failed: ${publishError.message}`);
+                    }
+
+                } catch (contentfulError) {
+                    console.error('Contentful error:', contentfulError);
+                    throw new Error(`Contentful operation failed: ${contentfulError.message}`);
                 }
 
                 // Clear form and show success message
@@ -331,8 +352,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 showMembershipModal('Thank you! Your membership application has been submitted and sent to your email.');
 
             } catch (error) {
-                console.error('Error:', error);
-                showMembershipModal('An error occurred. Please try again.', true);
+                console.error('Operation failed:', {
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name,
+                    fullError: JSON.stringify(error, Object.getOwnPropertyNames(error))
+                });
+                showMembershipModal(`An error occurred: ${error.message}. Please try again.`, true);
             }
         });
         document.getElementById('closeModalButton').addEventListener('click', function() {
