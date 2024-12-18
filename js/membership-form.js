@@ -400,6 +400,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                     await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
                 }
 
+                // Add a delay for mobile devices
+                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                    console.log('Mobile device detected, adding delay...');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+
                 // Clean and validate PDF data
                 const pdfData = pdfBase64.split(',')[1] || pdfBase64;
                 
