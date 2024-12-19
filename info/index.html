@@ -116,37 +116,12 @@
             const select = document.querySelector('.info-nav-select');
             const navList = document.querySelector('.info-nav ul');
             
-            // Debug log
-            console.log('Initial setup - Select element:', select);
-            
-            function toggleNavigation() {
-                const isMobile = window.innerWidth <= 768;
-                console.log('Window width:', window.innerWidth, 'Is mobile:', isMobile);
-                
-                if (isMobile) {
-                    select.style.display = 'block';
-                    navList.style.display = 'none';
-                } else {
-                    select.style.display = 'none';
-                    navList.style.display = 'block';
-                }
-            }
-
-            // Initial toggle
-            toggleNavigation();
-            
-            // Handle window resize
-            window.addEventListener('resize', toggleNavigation);
-
             // Handle dropdown selection
             select.addEventListener('change', function(e) {
-                console.log('Dropdown changed - Selected value:', this.value);
-                
                 const targetElement = document.querySelector(this.value);
-                console.log('Target element:', targetElement);
-
+                
                 if (targetElement) {
-                    const headerOffset = 100;
+                    const headerOffset = 180; // Increased to account for fixed header + dropdown
                     const elementPosition = targetElement.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
