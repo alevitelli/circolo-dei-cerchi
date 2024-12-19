@@ -621,7 +621,7 @@ body {
 @media (max-width: 480px) {
     .info-sidebar {
         position: fixed;
-        top: 140px;
+        top: 105px;
         left: 0;
         right: 0;
         margin: 0;
