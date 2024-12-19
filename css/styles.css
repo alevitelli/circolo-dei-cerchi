@@ -196,7 +196,7 @@ body {
 .main-footer {
     background-color: var(--color-white);
     color: var(--color-accent2);
-    padding: 3rem 0;
+    padding: 1rem 0;
 }
 
 .footer-content {
@@ -1071,4 +1071,5 @@ body {
     text-decoration: underline;
     text-decoration-color: var(--color-background); /* Yellow underline on hover */
     text-decoration-thickness: 2px; /* Makes the underline more visible */
+}
 }
