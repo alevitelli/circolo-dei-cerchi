@@ -43,21 +43,27 @@
                             console.log('Payment request sent');
                             break;
                         case 'success':
-                            console.log('Payment marked as successful');
-                            try {
-                                window.location.href = `/membership?status=PAID&checkoutId=${checkoutId}`;
-                            } catch (e) {
-                                console.error('Redirect error:', e);
-                            }
+                            console.log('Payment successful, attempting redirect...');
+                            setTimeout(() => {
+                                try {
+                                    window.location.replace(`/membership?status=PAID&checkoutId=${checkoutId}`);
+                                } catch (e) {
+                                    console.error('Redirect error:', e);
+                                    window.location = `/membership?status=PAID&checkoutId=${checkoutId}`;
+                                }
+                            }, 1000);
                             break;
                         case 'error':
                         case 'fail':
-                            console.error(`Payment ${type}:`, JSON.stringify(body));
-                            try {
-                                window.location.href = `/membership?status=FAILED&checkoutId=${checkoutId}`;
-                            } catch (e) {
-                                console.error('Redirect error:', e);
-                            }
+                            console.error(`Payment ${type}:`, body);
+                            setTimeout(() => {
+                                try {
+                                    window.location.replace(`/membership?status=FAILED&checkoutId=${checkoutId}`);
+                                } catch (e) {
+                                    console.error('Redirect error:', e);
+                                    window.location = `/membership?status=FAILED&checkoutId=${checkoutId}`;
+                                }
+                            }, 1000);
                             break;
                     }
                 }
