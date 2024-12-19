@@ -58,7 +58,7 @@ function createCorsoHTML(corso) {
                 </div>
                 <h2 class="event-name">${corso.fields.nomeCorso}</h2>
             </div>
-            <a href="/corso?id=${corso.sys.id}" class="calendar-cta">SCOPRI DI PIU'</a>
+            <a href="/corso-event?id=${corso.sys.id}" class="calendar-cta">SCOPRI DI PIU'</a>
         </article>
     `;
 }
