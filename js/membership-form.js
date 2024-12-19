@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function() {
+
     try {
         console.log('Checking for configuration...');
         console.log('Current CONFIG:', window.CONFIG);
