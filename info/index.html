@@ -35,7 +35,7 @@
     <main class="info-container">
         <div class="info-sidebar">
             <nav class="info-nav">
-                <select class="info-nav-select" style="display: none;">
+                <select class="info-nav-select">
                     <option value="#about">ABOUT US</option>
                     <option value="#lospazio">LO SPAZIO</option>
                     <option value="#rentit">RENT IT</option>
@@ -112,14 +112,18 @@
 
     <script src="/js/gallery.js"></script>
     <script>
-        // Handle mobile navigation
         document.addEventListener('DOMContentLoaded', function() {
             const select = document.querySelector('.info-nav-select');
             const navList = document.querySelector('.info-nav ul');
             
-            // Show/hide appropriate navigation based on screen size
+            // Debug log
+            console.log('Initial setup - Select element:', select);
+            
             function toggleNavigation() {
-                if (window.innerWidth <= 768) {
+                const isMobile = window.innerWidth <= 768;
+                console.log('Window width:', window.innerWidth, 'Is mobile:', isMobile);
+                
+                if (isMobile) {
                     select.style.display = 'block';
                     navList.style.display = 'none';
                 } else {
@@ -127,19 +131,30 @@
                     navList.style.display = 'block';
                 }
             }
-            // Initial check
-            toggleNavigation();
 
-            // Listen for window resize
+            // Initial toggle
+            toggleNavigation();
+            
+            // Handle window resize
             window.addEventListener('resize', toggleNavigation);
 
             // Handle dropdown selection
-            select.addEventListener('change', function() {
-                const selectedValue = this.value;
-                document.querySelector(selectedValue).scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            select.addEventListener('change', function(e) {
+                console.log('Dropdown changed - Selected value:', this.value);
+                
+                const targetElement = document.querySelector(this.value);
+                console.log('Target element:', targetElement);
+
+                if (targetElement) {
+                    const headerOffset = 100;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
             });
         });
     </script>
