@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         async function handleSuccessfulPayment() {
             try {
-                showMembershipModal('Processing your application...');
+                showMembershipModal('Stiamo elaborando la tua richiesta...');
 
                 // 1. Retrieve stored form data
                 const storedFormData = sessionStorage.getItem('membershipFormData');
@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 await createContentfulEntry(formData);
 
                 // 7. Show success message and clean up
-                showMembershipModal('Thank you! Your membership application has been submitted successfully and sent to your email.');
+                showMembershipModal('Grazie! La tua richiesta è stata inviata con successo. Controlla di aver ricevuta la tessera per email.');
                 sessionStorage.removeItem('membershipFormData');
                 sessionStorage.removeItem('sumupCheckoutId');
 
