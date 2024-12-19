@@ -18,7 +18,10 @@
             const urlParams = new URLSearchParams(window.location.search);
             const checkoutId = urlParams.get('checkoutId');
 
+            console.log('Initializing payment with checkout ID:', checkoutId);
+
             if (!checkoutId) {
+                console.error('No checkout ID provided');
                 window.location.href = '/membership';
                 return;
             }
@@ -29,26 +32,40 @@
                 locale: 'it-IT',
                 country: 'IT',
                 onResponse: function(type, body) {
-                    console.log('Payment response type:', type);
-                    console.log('Full response body:', body);
-                    
+                    console.log(`Step ${new Date().toISOString()}: ${type}`);
+                    console.log('Response body:', JSON.stringify(body));
+
                     switch(type) {
                         case 'auth-screen':
-                            console.log('3D Secure authentication required');
+                            console.log('3DS Auth started');
                             break;
-                        case 'error':
-                            console.error('Payment error:', body.error_message || body);
+                        case 'sent':
+                            console.log('Payment request sent');
                             break;
                         case 'success':
-                            window.location.href = `/membership?status=PAID&checkoutId=${checkoutId}`;
+                            console.log('Payment marked as successful');
+                            try {
+                                window.location.href = `/membership?status=PAID&checkoutId=${checkoutId}`;
+                            } catch (e) {
+                                console.error('Redirect error:', e);
+                            }
                             break;
+                        case 'error':
                         case 'fail':
-                            console.error('Payment failed:', body);
-                            window.location.href = `/membership?status=FAILED&checkoutId=${checkoutId}`;
+                            console.error(`Payment ${type}:`, JSON.stringify(body));
+                            try {
+                                window.location.href = `/membership?status=FAILED&checkoutId=${checkoutId}`;
+                            } catch (e) {
+                                console.error('Redirect error:', e);
+                            }
                             break;
                     }
                 }
             });
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
         });
     </script>
 </body>
