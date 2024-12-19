@@ -26,14 +26,26 @@
             SumUpCard.mount({
                 id: 'sumup-card',
                 checkoutId: checkoutId,
+                locale: 'it-IT',
+                country: 'IT',
                 onResponse: function(type, body) {
-                    console.log('Payment response:', type, body);
-                    if (type === 'success') {
-                        // Redirect back to membership form with success status
-                        window.location.href = `/membership?status=PAID&checkoutId=${checkoutId}`;
-                    } else if (type === 'error' || type === 'fail') {
-                        // Redirect back with error status
-                        window.location.href = `/membership?status=FAILED&checkoutId=${checkoutId}`;
+                    console.log('Payment response type:', type);
+                    console.log('Full response body:', body);
+                    
+                    switch(type) {
+                        case 'auth-screen':
+                            console.log('3D Secure authentication required');
+                            break;
+                        case 'error':
+                            console.error('Payment error:', body.error_message || body);
+                            break;
+                        case 'success':
+                            window.location.href = `/membership?status=PAID&checkoutId=${checkoutId}`;
+                            break;
+                        case 'fail':
+                            console.error('Payment failed:', body);
+                            window.location.href = `/membership?status=FAILED&checkoutId=${checkoutId}`;
+                            break;
                     }
                 }
             });
