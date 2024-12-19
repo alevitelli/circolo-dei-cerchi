@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net;">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net;">
     <title>Circolo dei Cerchi</title>
     <link rel="stylesheet" href="/css/styles.css">
     <!-- Load Contentful SDK first -->
     <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
     <!-- Then load your configuration -->
+    <script src="/js/hamburger-menu.js"></script>
     <script src="/js/init.js"></script>
     <!-- Then load your application code -->
     <script src="/js/featured-events.js" defer></script>
@@ -56,41 +57,19 @@
     </footer>
 
     <script>
-        // Initialize hamburger menu immediately and independently
-        function initHamburgerMenu() {
-            const hamburger = document.querySelector('.hamburger');
-            const mainNav = document.querySelector('.main-nav');
-
-            if (hamburger && mainNav) {
-                console.log('Hamburger menu elements found'); // Debug log
-                hamburger.addEventListener('click', (e) => {
-                    console.log('Hamburger clicked'); // Debug log
-                    e.preventDefault(); // Prevent any default behavior
-                    e.stopPropagation(); // Stop event bubbling
-                    hamburger.classList.toggle('active');
-                    mainNav.classList.toggle('active');
-                });
-
-                // Close menu when clicking a link
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.addEventListener('click', () => {
-                        hamburger.classList.remove('active');
-                        mainNav.classList.remove('active');
-                    });
-                });
-            } else {
-                console.error('Hamburger menu elements not found'); // Debug log
-            }
-        }
-
-        // Try to initialize immediately
-        initHamburgerMenu();
-
-        // Also try on DOMContentLoaded as a fallback
-        document.addEventListener('DOMContentLoaded', initHamburgerMenu);
-
-        // Final fallback - try again after a short delay
-        setTimeout(initHamburgerMenu, 1000);
+        // Try multiple times to initialize the hamburger menu
+        window.addEventListener('load', () => {
+            window.initHamburgerMenu();
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            window.initHamburgerMenu();
+        });
+        
+        // Final fallback
+        setTimeout(() => {
+            window.initHamburgerMenu();
+        }, 1000);
     </script>
 </body>
 </html>
