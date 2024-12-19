@@ -112,10 +112,12 @@
 
     <script src="/js/gallery.js"></script>
     <script>
+        // Handle mobile navigation
         document.addEventListener('DOMContentLoaded', function() {
             const select = document.querySelector('.info-nav-select');
             const navList = document.querySelector('.info-nav ul');
             
+            // Show/hide appropriate navigation based on screen size
             function toggleNavigation() {
                 if (window.innerWidth <= 768) {
                     select.style.display = 'block';
@@ -125,30 +127,19 @@
                     navList.style.display = 'block';
                 }
             }
-
+            // Initial check
             toggleNavigation();
+
+            // Listen for window resize
             window.addEventListener('resize', toggleNavigation);
 
-            // Improved scroll behavior for mobile
+            // Handle dropdown selection
             select.addEventListener('change', function() {
                 const selectedValue = this.value;
-                const targetElement = document.querySelector(selectedValue);
-                
-                if (targetElement) {
-                    // Account for the fixed header and sidebar
-                    const headerHeight = document.querySelector('.main-header').offsetHeight;
-                    const sidebarHeight = document.querySelector('.info-sidebar').offsetHeight;
-                    const totalOffset = headerHeight + sidebarHeight;
-
-                    // Scroll to the section with offset
-                    window.scrollTo({
-                        top: targetElement.offsetTop - totalOffset,
-                        behavior: 'smooth'
-                    });
-
-                    // Update URL hash without scrolling
-                    history.pushState(null, null, selectedValue);
-                }
+                document.querySelector(selectedValue).scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             });
         });
     </script>
