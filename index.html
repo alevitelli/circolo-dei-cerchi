@@ -19,8 +19,13 @@
         <div class="container">
             <a href="/" class="logo">
                 <img src="//images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png" alt="Circolo dei Cerchi" class="header-logo">
-                <img src="//images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a6953b67c75b74c520d657b951253/logo_1.png" alt="Circolo dei Cerchi" class="header-logo">
+                <img src="//images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a953b67c75b74c520d657b951253/logo_1.png" alt="Circolo dei Cerchi" class="header-logo">
             </a>
+            <button class="hamburger">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
             <nav class="main-nav">
                 <ul>
                     <li><a href="/info" class="nav-link">L'ASSOCIAZIONE</a></li>
@@ -49,5 +54,23 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const mainNav = document.querySelector('.main-nav');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mainNav.classList.toggle('active');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mainNav.classList.remove('active');
+            });
+        });
+    </script>
 </body>
 </html>
