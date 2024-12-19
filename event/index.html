@@ -70,5 +70,20 @@
             </div>
         </div>
     </footer>
+    <script>
+        // Initialize the info navigation
+        window.addEventListener('load', () => {
+            window.initInfoNav();
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            window.initInfoNav();
+        });
+        
+        // Final fallback
+        setTimeout(() => {
+            window.initInfoNav();
+        }, 1000);
+    </script>
 </body>
 </html> 
