@@ -54,12 +54,12 @@
 
                 <div class="form-group">
                     <label for="nomeECognome">Nome e Cognome*:</label>
-                    <input type="text" id="nomeECognome" name="nomeECognome" required>
+                    <input type="text" id="nomeECognome" name="nomeECognome" required style="text-transform:capitalize;">
                 </div>
 
                 <div class="form-group">
-                    <label for="cittaEProvinciaDiNascita">Città e Provincia di Nascita*:</label>
-                    <input type="text" id="cittaEProvinciaDiNascita" name="cittaEProvinciaDiNascita" required>
+                    <label for="cittaEProvinciaDiNascita">Città Nascita*:</label>
+                    <input type="text" id="cittaEProvinciaDiNascita" name="cittaEProvinciaDiNascita" required style="text-transform:capitalize;">
                 </div>
 
                 <div class="form-group">
@@ -70,15 +70,16 @@
                         name="dataDiNascita" 
                         required
                         pattern="\d{2}/\d{2}/\d{4}"
-                        placeholder="DD/MM/YYYY"
                         max="2024-12-31"
                         min="1900-01-01"
+                        style="text-transform:uppercase"
+                        maxlength="16"
                     >
                 </div>
 
                 <div class="form-group">
-                    <label for="indirizzoEComuneDiResidenza">Indirizzo e Comune di Residenza*:</label>
-                    <input type="text" id="indirizzoEComuneDiResidenza" name="indirizzoEComuneDiResidenza" required>
+                    <label for="indirizzoEComuneDiResidenza">Indirizzo di Residenza*:</label>
+                    <input type="text" id="indirizzoEComuneDiResidenza" name="indirizzoEComuneDiResidenza" required style="text-transform:capitalize;">
                 </div>
 
                 <div class="form-group">
