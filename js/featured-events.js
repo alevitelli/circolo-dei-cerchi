@@ -116,7 +116,7 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
                     <a href="/event?id=${event.sys.id}">${event.fields.eventName}</a>
                 </h2>
                 ${event.fields.eventDetail ? `<p class="event-detail">${event.fields.eventDetail}</p>` : ''}
-                <a href="/event?id=${event.sys.id}" class="cta-button">More Info</a>
+                <a href="/event?id=${event.sys.id}" class="cta-button">SCOPRI DI PIU'</a>
             </div>
         </div>
     `;

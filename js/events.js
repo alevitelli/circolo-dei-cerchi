@@ -66,7 +66,7 @@ function createEventHTML(event) {
                 <h2 class="event-name">${event.fields.eventName}</h2>
                 <div class="lineup">${event.fields.eventDetail || ''}</div>
             </div>
-            <a href="/event?id=${event.sys.id}" class="calendar-cta">MORE INFO</a>
+            <a href="/event?id=${event.sys.id}" class="calendar-cta">SCOPRI DI PIU'</a>
         </article>
     `;
 }
@@ -75,7 +75,7 @@ function createEventHTML(event) {
 function getMonthYear(dateString) {
     const date = new Date(dateString);
     return {
-        month: date.toLocaleString('en-US', { month: 'long' }).toUpperCase(),
+        month: date.toLocaleString('it-IT', { month: 'long' }).toUpperCase(),
         year: date.getFullYear()
     };
 }
@@ -84,7 +84,7 @@ function getMonthYear(dateString) {
 function isInMonthYear(dateString, month, year) {
     const date = new Date(dateString);
     return date.getFullYear() === parseInt(year) && 
-           date.toLocaleString('en-US', { month: 'long' }).toUpperCase() === month;
+           date.toLocaleString('it-IT', { month: 'long' }).toUpperCase() === month;
 }
 
 // Function to populate filter options
