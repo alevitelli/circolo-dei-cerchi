@@ -1092,4 +1092,69 @@ body {
     text-decoration-color: var(--color-background); /* Yellow underline on hover */
     text-decoration-thickness: 2px; /* Makes the underline more visible */
 }
+
+/* Hamburger Menu Styles */
+.hamburger {
+    display: none;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0.5rem;
+}
+
+.hamburger-line {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background-color: var(--color-accent2);
+    margin: 5px 0;
+    transition: transform 0.3s ease;
+}
+
+/* Mobile Navigation Styles */
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+        z-index: 101;
+    }
+
+    .main-nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background-color: var(--color-white);
+        padding: 6rem 2rem;
+        transition: right 0.3s ease;
+        z-index: 100;
+        border-left: 2px solid var(--color-accent2);
+    }
+
+    .main-nav.active {
+        right: 0;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .main-nav ul li {
+        width: 100%;
+        margin: 1rem 0;
+    }
+
+    /* Hamburger animation when active */
+    .hamburger.active .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .hamburger.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+    }
 }
