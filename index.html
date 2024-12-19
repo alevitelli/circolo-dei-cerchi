@@ -56,20 +56,30 @@
     </footer>
 
     <script>
-        const hamburger = document.querySelector('.hamburger');
-        const mainNav = document.querySelector('.main-nav');
+        window.addEventListener('DOMContentLoaded', () => {
+            // Make sure this runs after init.js has completed
+            const hamburger = document.querySelector('.hamburger');
+            const mainNav = document.querySelector('.main-nav');
 
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            mainNav.classList.toggle('active');
-        });
+            if (hamburger && mainNav) {
+                console.log('Hamburger menu elements found'); // Debug log
+                hamburger.addEventListener('click', (e) => {
+                    console.log('Hamburger clicked'); // Debug log
+                    e.preventDefault(); // Prevent any default behavior
+                    hamburger.classList.toggle('active');
+                    mainNav.classList.toggle('active');
+                });
 
-        // Close menu when clicking a link
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                mainNav.classList.remove('active');
-            });
+                // Close menu when clicking a link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        mainNav.classList.remove('active');
+                    });
+                });
+            } else {
+                console.error('Hamburger menu elements not found'); // Debug log
+            }
         });
     </script>
 </body>
