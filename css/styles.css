@@ -585,6 +585,7 @@ body {
     }
 
     .info-nav-select {
+        display: block !important; /* Override the inline style */
         width: 100%;
         padding: 0.75rem;
         font-size: 1.1rem;
@@ -594,16 +595,23 @@ body {
         color: var(--color-accent2);
         text-transform: uppercase;
         cursor: pointer;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.7rem top 50%;
+        background-size: 1.5rem auto;
+        padding-right: 2.5rem;
     }
 
-    .info-nav::after {
-        content: '▼';
-        position: absolute;
-        right: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        pointer-events: none;
-        color: var(--color-accent2);
+    .info-nav ul {
+        display: none !important; /* Hide the list view on mobile */
+    }
+
+    .info-nav-select:focus {
+        outline: none;
+        border-color: var(--color-accent2);
     }
 
     .info-content {
