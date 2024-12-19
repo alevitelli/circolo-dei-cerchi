@@ -120,6 +120,21 @@
 
     <script src="/js/gallery.js"></script>
     <script>
+        // Try multiple times to initialize the hamburger menu
+        window.addEventListener('load', () => {
+            window.initHamburgerMenu();
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            window.initHamburgerMenu();
+        });
+        
+        // Final fallback
+        setTimeout(() => {
+            window.initHamburgerMenu();
+        }, 1000);
+    </script>
+    <script>
         // Initialize the info navigation
         window.addEventListener('load', () => {
             window.initInfoNav();

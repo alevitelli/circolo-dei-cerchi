@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="css/styles.css">
     <!-- Load Contentful SDK first -->
     <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
-    <script src="/js/init.js"></script>
     <script src="/js/hamburger-menu.js"></script>
+    <script src="/js/init.js"></script>
     <!-- Then load configuration -->
     <!-- Load other dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -128,18 +128,18 @@
         </div>
     </div>
     <script>
-        // Initialize the info navigation
+        // Try multiple times to initialize the hamburger menu
         window.addEventListener('load', () => {
-            window.initInfoNav();
+            window.initHamburgerMenu();
         });
         
         document.addEventListener('DOMContentLoaded', () => {
-            window.initInfoNav();
+            window.initHamburgerMenu();
         });
         
         // Final fallback
         setTimeout(() => {
-            window.initInfoNav();
+            window.initHamburgerMenu();
         }, 1000);
     </script>
 </body>

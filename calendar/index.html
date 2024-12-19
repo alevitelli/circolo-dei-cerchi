@@ -62,18 +62,18 @@
         </div>
     </footer>
     <script>
-        // Initialize the info navigation
+        // Try multiple times to initialize the hamburger menu
         window.addEventListener('load', () => {
-            window.initInfoNav();
+            window.initHamburgerMenu();
         });
         
         document.addEventListener('DOMContentLoaded', () => {
-            window.initInfoNav();
+            window.initHamburgerMenu();
         });
         
         // Final fallback
         setTimeout(() => {
-            window.initInfoNav();
+            window.initHamburgerMenu();
         }, 1000);
     </script>
 </body>
