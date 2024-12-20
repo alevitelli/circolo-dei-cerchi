@@ -52,12 +52,12 @@ async function initContentful() {
       });
 
       // Create grid for remaining events (5-10)
-      if (featuredEvents.length > 4) {
+      if (featuredEvents.length > 3) {
         console.log('Creating grid for additional events');
         const eventsGrid = document.createElement('div');
         eventsGrid.className = 'events-grid';
         
-        featuredEvents.slice(4, 10).forEach(event => {
+        featuredEvents.slice(3, 10).forEach(event => {
           const eventHtml = createFeaturedEventHTML(event);
           eventsGrid.innerHTML += eventHtml;
         });
