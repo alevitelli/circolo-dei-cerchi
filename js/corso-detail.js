@@ -97,9 +97,14 @@ function displayCorso(corso) {
 
 document.addEventListener('DOMContentLoaded', initContentful);
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize EmailJS with your public key
-    config.EMAILJS_PUBLIC_KEY; // Replace with your actual EmailJS public key
+document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize EmailJS
+    try {
+        const config = await window.getConfig();
+        emailjs.init(config.EMAILJS_PUBLIC_KEY);
+    } catch (error) {
+        console.error('Error initializing EmailJS:', error);
+    }
 
     const corsoInfoForm = document.getElementById('corsoInfoForm');
     const formMessage = document.getElementById('formMessage');
@@ -108,37 +113,60 @@ document.addEventListener('DOMContentLoaded', () => {
         corsoInfoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Get form data
-            const nome = document.getElementById('nome').value;
-            const email = document.getElementById('email').value;
-            const messaggio = document.getElementById('messaggio').value;
-            const corso = document.getElementById('corsoTitle').value;
+            // Show loading state
+            const submitButton = corsoInfoForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.textContent = 'Invio in corso...';
+            submitButton.disabled = true;
 
             try {
+                // Get form data
+                const nome = document.getElementById('nome').value;
+                const email = document.getElementById('email').value;
+                const messaggio = document.getElementById('messaggio').value;
+                const corso = document.getElementById('corsoTitle').value;
+
+                const templateParams = {
+                    to_name: "Circolo dei Cerchi",
+                    from_name: nome,
+                    reply_to: email,
+                    message: messaggio,
+                    corso_title: corso
+                };
+
                 // Send email using EmailJS
-                await emailjs.send(
+                const response = await emailjs.send(
                     config.EMAILJS_SERVICE_ID,
                     config.EMAILJS_TEMPLATE_ID_FORM_CORSO,
-                    {
-                        from_name: nome,
-                        reply_to: email,
-                        message: messaggio,
-                        corso_title: corso,
-                        logo1_url: 'https://images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a953b67c75b74c520d657b951253/logo_1.png',
-                        logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
-                    },
-                    config.EMAILJS_PUBLIC_KEY
+                    templateParams
                 );
 
+                console.log('Email sent successfully:', response);
+
                 // Show success message
-                formMessage.textContent = 'Grazie per il tuo messaggio! Ti risponderemo presto.';
+                formMessage.innerHTML = `
+                    <div class="success-message">
+                        ✓ Grazie per il tuo messaggio! Ti risponderemo presto.
+                    </div>
+                `;
                 formMessage.className = 'success';
                 corsoInfoForm.reset();
 
             } catch (error) {
                 console.error('Email error:', error);
-                formMessage.textContent = 'Si è verificato un errore. Per favore riprova più tardi.';
+                formMessage.innerHTML = `
+                    <div class="error-message">
+                        ✕ Si è verificato un errore. Per favore riprova più tardi.
+                    </div>
+                `;
                 formMessage.className = 'error';
+            } finally {
+                // Restore button state
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
+
+                // Scroll to the message
+                formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         });
     }
