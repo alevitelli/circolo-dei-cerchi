@@ -17,6 +17,7 @@ async function initConfig() {
         !config.EMAILJS_PUBLIC_KEY ||
         !config.EMAILJS_SERVICE_ID ||
         !config.EMAILJS_TEMPLATE_ID ||
+        !config.EMAILJS_TEMPLATE_ID_FORM_CORSO ||
         !config.SUMUP_MERCHANT_CODE ||
         !config.SUMUP_ACCESS_TOKEN) {
       throw new Error('Configuration is missing required properties');
@@ -29,6 +30,7 @@ async function initConfig() {
       EMAILJS_PUBLIC_KEY: config.EMAILJS_PUBLIC_KEY,
       EMAILJS_SERVICE_ID: config.EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID: config.EMAILJS_TEMPLATE_ID,
+      EMAILJS_TEMPLATE_ID_FORM_CORSO: config.EMAILJS_TEMPLATE_ID_FORM_CORSO,
       SUMUP_MERCHANT_CODE: config.SUMUP_MERCHANT_CODE,
       SUMUP_ACCESS_TOKEN: config.SUMUP_ACCESS_TOKEN
     };

@@ -96,3 +96,66 @@ function displayCorso(corso) {
 }
 
 document.addEventListener('DOMContentLoaded', initContentful);
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize EmailJS with your public key
+    config.EMAILJS_PUBLIC_KEY; // Replace with your actual EmailJS public key
+
+    const corsoInfoForm = document.getElementById('corsoInfoForm');
+    const formMessage = document.getElementById('formMessage');
+
+    if (corsoInfoForm) {
+        corsoInfoForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Get form data
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const messaggio = document.getElementById('messaggio').value;
+            const corso = document.getElementById('corsoTitle').value;
+
+            try {
+                // Send email using EmailJS
+                await emailjs.send(
+                    config.EMAILJS_SERVICE_ID,
+                    config.EMAILJS_TEMPLATE_ID_FORM_CORSO,
+                    {
+                        from_name: nome,
+                        reply_to: email,
+                        message: messaggio,
+                        corso_title: corso,
+                        logo1_url: 'https://images.ctfassets.net/evaxoo3zkmhs/2mlMi9zSd8HvfXT87ZcDEr/809a953b67c75b74c520d657b951253/logo_1.png',
+                        logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
+                    },
+                    config.EMAILJS_PUBLIC_KEY
+                );
+
+                // Show success message
+                formMessage.textContent = 'Grazie per il tuo messaggio! Ti risponderemo presto.';
+                formMessage.className = 'success';
+                corsoInfoForm.reset();
+
+            } catch (error) {
+                console.error('Email error:', error);
+                formMessage.textContent = 'Si è verificato un errore. Per favore riprova più tardi.';
+                formMessage.className = 'error';
+            }
+        });
+    }
+
+    // Set the corso title in the hidden field when loading the page
+    const setCorsoTitle = (title) => {
+        const corsoTitleInput = document.getElementById('corsoTitle');
+        if (corsoTitleInput) {
+            corsoTitleInput.value = title;
+        }
+    };
+
+    // Call this function when you load the corso details
+    client.getEntry(corsoId)
+        .then((entry) => {
+            // ... your existing code ...
+            setCorsoTitle(entry.fields.title);
+        })
+        .catch(console.error);
+});

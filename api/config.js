@@ -12,6 +12,7 @@ module.exports = (req, res) => {
     hasEmailJsPublicKey: !!process.env.EMAILJS_PUBLIC_KEY,
     hasServiceId: !!process.env.EMAILJS_SERVICE_ID,
     hasTemplateId: !!process.env.EMAILJS_TEMPLATE_ID,
+    hasTemplateIdFormCorso: !!process.env.EMAILJS_TEMPLATE_ID_FORM_CORSO,
     hasSumupMerchantCode: !!process.env.SUMUP_MERCHANT_CODE,
     hasSumupAccessToken: !!process.env.SUMUP_ACCESS_TOKEN
   });
@@ -23,6 +24,7 @@ module.exports = (req, res) => {
     EMAILJS_PUBLIC_KEY: process.env.EMAILJS_PUBLIC_KEY,
     EMAILJS_SERVICE_ID: process.env.EMAILJS_SERVICE_ID,
     EMAILJS_TEMPLATE_ID: process.env.EMAILJS_TEMPLATE_ID,
+    EMAILJS_TEMPLATE_ID_FORM_CORSO: process.env.EMAILJS_TEMPLATE_ID_FORM_CORSO,
     SUMUP_MERCHANT_CODE: process.env.SUMUP_MERCHANT_CODE,
     SUMUP_ACCESS_TOKEN: process.env.SUMUP_ACCESS_TOKEN
   };
@@ -34,6 +36,7 @@ module.exports = (req, res) => {
       !config.EMAILJS_PUBLIC_KEY ||
       !config.EMAILJS_SERVICE_ID ||
       !config.EMAILJS_TEMPLATE_ID ||
+      !config.EMAILJS_TEMPLATE_ID_FORM_CORSO ||
       !config.SUMUP_MERCHANT_CODE ||
       !config.SUMUP_ACCESS_TOKEN) {
     return res.status(500).json({ error: 'Missing required configuration' });
