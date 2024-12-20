@@ -97,15 +97,7 @@ function displayCorso(corso) {
 
 document.addEventListener('DOMContentLoaded', initContentful);
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Initialize EmailJS
-    try {
-        const config = await window.getConfig();
-        emailjs.init(config.EMAILJS_PUBLIC_KEY);
-    } catch (error) {
-        console.error('Error initializing EmailJS:', error);
-    }
-
+document.addEventListener('DOMContentLoaded', () => {
     const corsoInfoForm = document.getElementById('corsoInfoForm');
     const formMessage = document.getElementById('formMessage');
 
@@ -120,11 +112,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitButton.disabled = true;
 
             try {
+                // Wait for config to be available
+                while (!window.CONFIG) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                const config = window.getConfig();
+
+                // Initialize EmailJS if not already initialized
+                if (!window.emailjs) {
+                    emailjs.init(config.EMAILJS_PUBLIC_KEY);
+                }
+
                 // Get form data
                 const nome = document.getElementById('nome').value;
                 const email = document.getElementById('email').value;
                 const messaggio = document.getElementById('messaggio').value;
-                const corso = document.getElementById('corsoTitle').value;
+                const corso = document.querySelector('.event-detail-heading').textContent;
 
                 const templateParams = {
                     to_name: "Circolo dei Cerchi",
@@ -133,6 +136,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     message: messaggio,
                     corso_title: corso
                 };
+
+                console.log('Sending email with params:', templateParams);
 
                 // Send email using EmailJS
                 const response = await emailjs.send(
@@ -170,20 +175,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-
-    // Set the corso title in the hidden field when loading the page
-    const setCorsoTitle = (title) => {
-        const corsoTitleInput = document.getElementById('corsoTitle');
-        if (corsoTitleInput) {
-            corsoTitleInput.value = title;
-        }
-    };
-
-    // Call this function when you load the corso details
-    client.getEntry(corsoId)
-        .then((entry) => {
-            // ... your existing code ...
-            setCorsoTitle(entry.fields.title);
-        })
-        .catch(console.error);
 });
