@@ -143,7 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await emailjs.send(
                     config.EMAILJS_SERVICE_ID,
                     config.EMAILJS_TEMPLATE_ID_FORM_CORSO,
-                    templateParams
+                    templateParams,
+                    config.EMAILJS_PUBLIC_KEY
                 );
 
                 console.log('Email sent successfully:', response);
