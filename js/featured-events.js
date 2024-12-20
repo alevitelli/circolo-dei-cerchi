@@ -44,7 +44,7 @@ async function initContentful() {
       eventsContainer.innerHTML = ''; // Clear existing content
       
       // Display first 4 events full width
-      const fullWidthEvents = featuredEvents.slice(0, 3);
+      const fullWidthEvents = featuredEvents.slice(0, 8);
       fullWidthEvents.forEach(event => {
         const eventHtml = createFeaturedEventHTML(event, true);
         console.log('Adding full-width event to container');
@@ -52,12 +52,12 @@ async function initContentful() {
       });
 
       // Create grid for remaining events (5-10)
-      if (featuredEvents.length > 3) {
+      if (featuredEvents.length > 8) {
         console.log('Creating grid for additional events');
         const eventsGrid = document.createElement('div');
         eventsGrid.className = 'events-grid';
         
-        featuredEvents.slice(3, 10).forEach(event => {
+        featuredEvents.slice(8, 10).forEach(event => {
           const eventHtml = createFeaturedEventHTML(event);
           eventsGrid.innerHTML += eventHtml;
         });
