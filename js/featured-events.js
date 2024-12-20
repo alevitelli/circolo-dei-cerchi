@@ -44,7 +44,7 @@ async function initContentful() {
       eventsContainer.innerHTML = ''; // Clear existing content
       
       // Display first 4 events full width
-      const fullWidthEvents = featuredEvents.slice(0, 4);
+      const fullWidthEvents = featuredEvents.slice(0, 3);
       fullWidthEvents.forEach(event => {
         const eventHtml = createFeaturedEventHTML(event, true);
         console.log('Adding full-width event to container');
