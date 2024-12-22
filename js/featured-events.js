@@ -37,14 +37,14 @@ async function initContentful() {
 
     const featuredEvents = response.items;
     if (featuredEvents.length > 0) {
-      console.log('Rendering events...');
+      // console.log('Rendering events...');
       eventsContainer.innerHTML = ''; // Clear existing content
       
       // Display first 4 events full width
       const fullWidthEvents = featuredEvents.slice(0, 8);
       fullWidthEvents.forEach(event => {
         const eventHtml = createFeaturedEventHTML(event, true);
-        console.log('Adding full-width event to container');
+        // console.log('Adding full-width event to container');
         eventsContainer.innerHTML += eventHtml;
       });
 
