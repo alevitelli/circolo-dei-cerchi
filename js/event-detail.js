@@ -52,16 +52,29 @@ async function loadEventDetail(client) {
 }
 
 function displayEvent(event) {
-    // console.log('Displaying event:', event.fields.eventName);
-    
     // Set page title
     document.title = `${event.fields.eventName} - Circolo dei Cerchi`;
 
     // Set hero image if exists
     if (event.fields.image) {
-        const imageUrl = event.fields.image.fields.file.url;
+        const baseUrl = `https:${event.fields.image.fields.file.url}`;
+        // Create responsive image versions
+        const mobileImage = `${baseUrl}?w=390&h=380&fm=webp&q=80`;
+        const desktopImage = `${baseUrl}?w=1320&h=450&fm=webp&q=80`;
+        const imagePosition = event.fields.imagePositionStart || 'center';
+
         document.querySelector('.event-detail-image').innerHTML = `
-            <img src="https:${imageUrl}" alt="${event.fields.eventName}">
+            <img srcset="${mobileImage} 390w,
+                        ${desktopImage} 1320w"
+                 sizes="(max-width: 768px) 390px,
+                        1320px"
+                 src="${desktopImage}"
+                 alt="${event.fields.eventName}"
+                 width="1320"
+                 height="450"
+                 loading="eager"
+                 style="object-position: center ${imagePosition}"
+                 decoding="async">
         `;
     }
 

@@ -94,6 +94,7 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
         // Create mobile and desktop optimized versions
         const mobileImage = `${baseUrl}?w=390&h=380&fm=webp&q=80`;
         const desktopImage = `${baseUrl}?w=1320&h=450&fm=webp&q=80`;
+        const imagePosition = event.fields.imagePositionStart || 'center';
         
         const html = `
             <div class="event-card ${isFullWidth ? 'featured' : ''}">
@@ -107,6 +108,7 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
                          width="${isFullWidth ? '1320' : '390'}"
                          height="${isFullWidth ? '450' : '380'}"
                          loading="${isFullWidth ? 'eager' : 'lazy'}"
+                         style="object-position: center ${imagePosition}"
                          decoding="async">
                 </div>
                 <div class="event-overlay"></div>
