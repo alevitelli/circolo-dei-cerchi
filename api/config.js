@@ -4,18 +4,21 @@ module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Log the environment variables (safely)
-  console.log('Environment variables available:', {
-    hasSpaceId: !!process.env.CONTENTFUL_SPACE_ID,
-    hasAccessToken: !!process.env.CONTENTFUL_ACCESS_TOKEN,
-    hasManagementToken: !!process.env.CONTENTFUL_MANAGEMENT_TOKEN,
-    hasEmailJsPublicKey: !!process.env.EMAILJS_PUBLIC_KEY,
-    hasServiceId: !!process.env.EMAILJS_SERVICE_ID,
-    hasTemplateId: !!process.env.EMAILJS_TEMPLATE_ID,
-    hasTemplateIdFormCorso: !!process.env.EMAILJS_TEMPLATE_ID_FORM_CORSO,
-    hasSumupMerchantCode: !!process.env.SUMUP_MERCHANT_CODE,
-    hasSumupAccessToken: !!process.env.SUMUP_ACCESS_TOKEN
-  });
+  // Only log presence of environment variables in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Environment variables status:', {
+      hasRequiredConfig: 
+        !!process.env.CONTENTFUL_SPACE_ID &&
+        !!process.env.CONTENTFUL_ACCESS_TOKEN &&
+        !!process.env.CONTENTFUL_MANAGEMENT_TOKEN &&
+        !!process.env.EMAILJS_PUBLIC_KEY &&
+        !!process.env.EMAILJS_SERVICE_ID &&
+        !!process.env.EMAILJS_TEMPLATE_ID &&
+        !!process.env.EMAILJS_TEMPLATE_ID_FORM_CORSO &&
+        !!process.env.SUMUP_MERCHANT_CODE &&
+        !!process.env.SUMUP_ACCESS_TOKEN
+    });
+  }
 
   const config = {
     CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
