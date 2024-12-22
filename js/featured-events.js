@@ -81,57 +81,48 @@ async function initContentful() {
 function createFeaturedEventHTML(event, isFullWidth = false) {
     console.log('Creating HTML for event:', event.fields.eventName);
     
-
+    // Safely get the image URL
+    const imageUrl = event.fields.image?.fields?.file?.url
+        ? `https:${event.fields.image.fields.file.url}`
+        : '';
+    
+    // Format the date
     function formatDate(dateString) {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('it-IT', {
-          weekday: 'short',
-          day: '2-digit',
-          month: '2-digit',
-          year: '2-digit'
-      }).toUpperCase();
-    }    
-    // Get the base image URL
-    let imageUrl = '';
-    if (event.fields.image?.fields?.file?.url) {
-        const baseUrl = `https:${event.fields.image.fields.file.url}`;
-        // Create mobile and desktop optimized versions
-        const mobileImage = `${baseUrl}?w=390&h=380&fit=fill&fm=webp&q=80`;
-        const desktopImage = `${baseUrl}?w=1320&h=450&fit=fill&fm=webp&q=80`;
-        
-        const html = `
-            <div class="event-card ${isFullWidth ? 'featured' : ''}">
-                <div class="event-image">
-                    <img srcset="${mobileImage} 390w,
-                                ${desktopImage} 1320w"
-                         sizes="(max-width: 768px) 390px,
-                                1320px"
-                         src="${desktopImage}"
-                         alt="${event.fields.eventName}"
-                         width="${isFullWidth ? '1320' : '390'}"
-                         height="${isFullWidth ? '450' : '380'}"
-                         loading="${isFullWidth ? 'eager' : 'lazy'}"
-                         decoding="async">
-                </div>
-                <div class="event-overlay"></div>
-                <div class="event-content">
-                    <div class="event-meta">
-                        ${event.fields.venue ? `<span class="venue">${event.fields.venue}</span>` : ''}
-                        <span class="divider">•</span>
-                        <span class="date">${formatDate(event.fields.eventDate)}</span>
-                        <span class="divider">•</span>
-                        ${event.fields.eventTime ? `<span class="time">${event.fields.eventTime}</span>` : ''}
-                    </div>
-                    <h2 class="event-title">
-                        <a href="/event?id=${event.sys.id}">${event.fields.eventName}</a>
-                    </h2>
-                    ${event.fields.eventDetail ? `<p class="event-detail">${event.fields.eventDetail}</p>` : ''}
-                    <a href="/event?id=${event.sys.id}" class="cta-button">SCOPRI DI PIU'</a>
-                </div>
-            </div>
-        `;
-        return html;
+        const date = new Date(dateString);
+        return date.toLocaleDateString('it-IT', {
+            weekday: 'short',
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        }).toUpperCase();
     }
+
+    // Create the HTML with the original structure
+    const html = `
+        <div class="event-card ${isFullWidth ? 'featured' : ''}">
+            <div class="event-image">
+                <img src="${imageUrl}" alt="${event.fields.eventName}">
+            </div>
+            <div class="event-overlay"></div>
+            <div class="event-content">
+                <div class="event-meta">
+                    ${event.fields.venue ? `<span class="venue">${event.fields.venue}</span>` : ''}
+                    <span class="divider">•</span>
+                    <span class="date">${formatDate(event.fields.eventDate)}</span>
+                    <span class="divider">•</span>
+                    ${event.fields.eventTime ? `<span class="time">${event.fields.eventTime}</span>` : ''}
+                </div>
+                <h2 class="event-title">
+                    <a href="/event?id=${event.sys.id}">${event.fields.eventName}</a>
+                </h2>
+                ${event.fields.eventDetail ? `<p class="event-detail">${event.fields.eventDetail}</p>` : ''}
+                <a href="/event?id=${event.sys.id}" class="cta-button">SCOPRI DI PIU'</a>
+            </div>
+        </div>
+    `;
+
+    console.log('Generated HTML:', html);
+    return html;
 }
 
 // Start initialization when DOM is ready
