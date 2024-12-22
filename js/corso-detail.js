@@ -1,21 +1,21 @@
 async function initContentful() {
     try {
-        console.log('Waiting for configuration...');
+        // console.log('Waiting for configuration...');
         while (!window.CONFIG) {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         
         const config = window.getConfig();
-        console.log('Using configuration:', {
-            spaceId: config.CONTENTFUL_SPACE_ID,
-            tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
-        });
+        // console.log('Using configuration:', {
+        //     spaceId: config.CONTENTFUL_SPACE_ID,
+        //     tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
+        // });
 
         if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_ACCESS_TOKEN) {
             throw new Error('Invalid configuration');
         }
 
-        console.log('Creating Contentful client...');
+        // console.log('Creating Contentful client...');
         const client = contentful.createClient({
             space: config.CONTENTFUL_SPACE_ID,
             accessToken: config.CONTENTFUL_ACCESS_TOKEN
@@ -39,9 +39,9 @@ async function loadCorsoDetail(client) {
             return;
         }
 
-        console.log('Fetching corso details for:', corsoId);
+        // console.log('Fetching corso details for:', corsoId);
         const entry = await client.getEntry(corsoId);
-        console.log('Corso data received:', entry.fields.nomeCorso);
+        // console.log('Corso data received:', entry.fields.nomeCorso);
         
         displayCorso(entry);
     } catch (error) {
@@ -52,7 +52,7 @@ async function loadCorsoDetail(client) {
 }
 
 function displayCorso(corso) {
-    console.log('Displaying corso:', corso.fields.nomeCorso);
+    // console.log('Displaying corso:', corso.fields.nomeCorso);
     
     // Set page title
     document.title = `${corso.fields.nomeCorso} - Circolo dei Cerchi`;
@@ -92,7 +92,7 @@ function displayCorso(corso) {
         document.querySelector('.event-detail-description').innerHTML = formattedDescription;
     }
 
-    console.log('Corso display complete');
+    // console.log('Corso display complete');
 }
 
 document.addEventListener('DOMContentLoaded', initContentful);
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     corso_title: corso
                 };
 
-                console.log('Sending email with params:', templateParams);
+                // console.log('Sending email with params:', templateParams);
 
                 // Send email using EmailJS
                 const response = await emailjs.send(
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     config.EMAILJS_PUBLIC_KEY
                 );
 
-                console.log('Email sent successfully:', response);
+                // console.log('Email sent successfully:', response);
 
                 // Show success message
                 formMessage.innerHTML = `

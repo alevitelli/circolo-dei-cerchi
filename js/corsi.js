@@ -2,22 +2,23 @@ let client;
 
 async function initContentful() {
     try {
-        console.log('Waiting for configuration...');
+        // console.log('Waiting for configuration...');
         while (!window.CONFIG) {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         
         const config = window.getConfig();
-        console.log('Using configuration:', {
-            spaceId: config.CONTENTFUL_SPACE_ID,
-            tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
-        });
+        // console.log('Using configuration::');
+        // , {
+        //     spaceId: config.CONTENTFUL_SPACE_ID,
+        //     tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
+        // });
 
         if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_ACCESS_TOKEN) {
             throw new Error('Invalid configuration');
         }
 
-        console.log('Creating Contentful client...');
+        // console.log('Creating Contentful client...');
         client = contentful.createClient({
             space: config.CONTENTFUL_SPACE_ID,
             accessToken: config.CONTENTFUL_ACCESS_TOKEN
@@ -42,7 +43,7 @@ function formatDate(dateString) {
 }
 
 function createCorsoHTML(corso) {
-    console.log('Creating HTML for corso:', corso.fields.nomeCorso);
+    // console.log('Creating HTML for corso:', corso.fields.nomeCorso);
     
     const venueDisplay = corso.fields.venueLocation ? 
         `<a href="${corso.fields.venueLocation}" target="_blank" rel="noopener noreferrer">${corso.fields.venue}</a>` : 
@@ -98,13 +99,13 @@ function populateFilterOptions(corsi) {
 
 async function loadCorsi() {
     try {
-        console.log('Fetching all corsi...');
+        // console.log('Fetching all corsi...');
         const response = await client.getEntries({
             content_type: 'corsoFormazione',
             order: 'fields.dataInizio'
         });
 
-        console.log(`Received ${response.items.length} corsi`);
+        // console.log(`Received ${response.items.length} corsi`);
         
         const corsiContainer = document.querySelector('.calendar-events');
         corsiContainer.innerHTML = '';
@@ -127,7 +128,7 @@ document.addEventListener('DOMContentLoaded', initContentful);
 document.querySelector('.time-filter').addEventListener('change', async (e) => {
     try {
         const timeFrame = e.target.value;
-        console.log('Filtering corsi for:', timeFrame);
+        // console.log('Filtering corsi for:', timeFrame);
         
         const response = await client.getEntries({
             content_type: 'corsoFormazione',
@@ -146,7 +147,7 @@ document.querySelector('.time-filter').addEventListener('change', async (e) => {
             }
         });
 
-        console.log(`Showing ${filteredCorsi.length} corsi`);
+        // console.log(`Showing ${filteredCorsi.length} corsi`);
         filteredCorsi.forEach(corso => {
             corsiContainer.innerHTML += createCorsoHTML(corso);
         });

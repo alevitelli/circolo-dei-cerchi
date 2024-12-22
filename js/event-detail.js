@@ -1,21 +1,21 @@
 async function initContentful() {
     try {
-        console.log('Waiting for configuration...');
+        // console.log('Waiting for configuration...');
         while (!window.CONFIG) {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         
         const config = window.getConfig();
-        console.log('Using configuration:', {
-            spaceId: config.CONTENTFUL_SPACE_ID,
-            tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
-        });
+        // console.log('Using configuration:', {
+        //     spaceId: config.CONTENTFUL_SPACE_ID,
+        //     tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
+        // });
 
         if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_ACCESS_TOKEN) {
             throw new Error('Invalid configuration');
         }
 
-        console.log('Creating Contentful client...');
+        // console.log('Creating Contentful client...');
         const client = contentful.createClient({
             space: config.CONTENTFUL_SPACE_ID,
             accessToken: config.CONTENTFUL_ACCESS_TOKEN
@@ -39,9 +39,9 @@ async function loadEventDetail(client) {
             return;
         }
 
-        console.log('Fetching event details for:', eventId);
+        // console.log('Fetching event details for:', eventId);
         const entry = await client.getEntry(eventId);
-        console.log('Event data received:', entry.fields.eventName);
+        // console.log('Event data received:', entry.fields.eventName);
         
         displayEvent(entry);
     } catch (error) {
@@ -52,7 +52,7 @@ async function loadEventDetail(client) {
 }
 
 function displayEvent(event) {
-    console.log('Displaying event:', event.fields.eventName);
+    // console.log('Displaying event:', event.fields.eventName);
     
     // Set page title
     document.title = `${event.fields.eventName} - Circolo dei Cerchi`;
@@ -100,7 +100,7 @@ function displayEvent(event) {
         document.querySelector('.event-detail-description').innerHTML = formattedDescription;
     }
 
-    console.log('Event display complete');
+    // console.log('Event display complete');
 }
 
 document.addEventListener('DOMContentLoaded', initContentful);

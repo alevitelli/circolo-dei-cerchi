@@ -2,22 +2,22 @@ let client;
 
 async function initContentful() {
     try {
-        console.log('Waiting for configuration...');
+        // console.log('Waiting for configuration...');
         while (!window.CONFIG) {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         
         const config = window.getConfig();
-        console.log('Using configuration:', {
-            spaceId: config.CONTENTFUL_SPACE_ID,
-            tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
-        });
+        // // console.log('Using configuration:', {
+        //     spaceId: config.CONTENTFUL_SPACE_ID,
+        //     tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
+        // });
 
         if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_ACCESS_TOKEN) {
             throw new Error('Invalid configuration');
         }
 
-        console.log('Creating Contentful client...');
+        // console.log('Creating Contentful client...');
         client = contentful.createClient({
             space: config.CONTENTFUL_SPACE_ID,
             accessToken: config.CONTENTFUL_ACCESS_TOKEN
@@ -45,7 +45,7 @@ function formatDate(dateString) {
 
 // Function to create event HTML
 function createEventHTML(event) {
-    console.log('Creating HTML for event:', event.fields.eventName);
+    // console.log('Creating HTML for event:', event.fields.eventName);
     
     const venueDisplay = event.fields.venueLocation ? 
         `<a href="${event.fields.venueLocation}" target="_blank" rel="noopener noreferrer">${event.fields.venue}</a>` : 
@@ -110,13 +110,13 @@ function populateFilterOptions(events) {
 // Load events function
 async function loadEvents() {
     try {
-        console.log('Fetching all events...');
+        // console.log('Fetching all events...');
         const response = await client.getEntries({
             content_type: 'calendarEvent',
             order: 'fields.eventDate'
         });
 
-        console.log(`Received ${response.items.length} events`);
+        // console.log(`Received ${response.items.length} events`);
         
         const eventsContainer = document.querySelector('.calendar-events');
         eventsContainer.innerHTML = '';
@@ -137,7 +137,7 @@ async function loadEvents() {
 // Filter events function
 async function filterEvents(timeFrame) {
     try {
-        console.log('Filtering events for:', timeFrame);
+        // console.log('Filtering events for:', timeFrame);
         const response = await client.getEntries({
             content_type: 'calendarEvent',
             order: 'fields.eventDate'
@@ -155,7 +155,7 @@ async function filterEvents(timeFrame) {
             }
         });
 
-        console.log(`Showing ${filteredEvents.length} events`);
+        // console.log(`Showing ${filteredEvents.length} events`);
         filteredEvents.forEach(event => {
             eventsContainer.innerHTML += createEventHTML(event);
         });

@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', async function() {
 
     try {
-        console.log('Checking for configuration...');
-        console.log('Current CONFIG:', window.CONFIG);
+        // console.log('Checking for configuration...');
+        // console.log('Current CONFIG:', window.CONFIG);
         
         // Wait for configuration with timeout
         let attempts = 0;
         const maxAttempts = 50; // 5 seconds total
         
         while (!window.CONFIG && attempts < maxAttempts) {
-            console.log('Waiting for configuration... Attempt:', attempts + 1);
+            // console.log('Waiting for configuration... Attempt:', attempts + 1);
             await new Promise(resolve => setTimeout(resolve, 100));
             attempts++;
         }
@@ -19,13 +19,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         
         const config = window.getConfig();
-        console.log('Configuration loaded:', {
-            hasSpaceId: !!config.CONTENTFUL_SPACE_ID,
-            hasManagementToken: !!config.CONTENTFUL_MANAGEMENT_TOKEN,
-            hasEmailJS: !!config.EMAILJS_PUBLIC_KEY,
-            hasServiceId: !!config.EMAILJS_SERVICE_ID,
-            hasTemplateId: !!config.EMAILJS_TEMPLATE_ID
-        });
+        // console.log('Configuration loaded:', {
+        //     hasSpaceId: !!config.CONTENTFUL_SPACE_ID,
+        //     hasManagementToken: !!config.CONTENTFUL_MANAGEMENT_TOKEN,
+        //     hasEmailJS: !!config.EMAILJS_PUBLIC_KEY,
+        //     hasServiceId: !!config.EMAILJS_SERVICE_ID,
+        //     hasTemplateId: !!config.EMAILJS_TEMPLATE_ID
+        // });
 
         if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_MANAGEMENT_TOKEN || !config.EMAILJS_PUBLIC_KEY) {
             throw new Error('Missing required configuration');
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Create a function to initialize EmailJS
         async function initializeEmailJS(publicKey) {
             if (emailjsInitialized) {
-                console.log('EmailJS already initialized');
+                // console.log('EmailJS already initialized');
                 return;
             }
         
@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     throw new Error('EmailJS public key is missing');
                 }
         
-                console.log('Initializing EmailJS...');
+                // console.log('Initializing EmailJS...');
                 await emailjs.init(publicKey);
                 
                 // Verify initialization
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
                 
                 emailjsInitialized = true;
-                console.log('EmailJS initialized successfully');
+                // console.log('EmailJS initialized successfully');
             } catch (error) {
                 console.error('EmailJS initialization failed:', {
                     error: error,
@@ -382,7 +382,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         async function sendConfirmationEmail(formData, pdfBase64) {
             try {
-                console.log('Starting email process...');
+                // console.log('Starting email process...');
                 
                 // Validate inputs
                 if (!formData?.fields?.email?.['en-US']) {
@@ -397,23 +397,23 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                 // Check if EmailJS needs initialization
                 if (!emailjsInitialized) {
-                    console.log('Initializing EmailJS...');
+                    // console.log('Initializing EmailJS...');
                     await initializeEmailJS(config.EMAILJS_PUBLIC_KEY);
                 }
 
                 // Add a delay for mobile devices
                 if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                    console.log('Mobile device detected, adding delay...');
+                    // console.log('Mobile device detected, adding delay...');
                     await new Promise(resolve => setTimeout(resolve, 2000));
                 }
 
                 // Clean and validate PDF data
                 const pdfData = pdfBase64.split(',')[1] || pdfBase64;
                 
-                console.log('Preparing email with parameters:');
-                console.log('To:', formData.fields.email['en-US']);
-                console.log('Name:', formData.fields.nomeECognome['en-US']);
-                console.log('PDF Size:', pdfData.length);
+                // console.log('Preparing email with parameters:');
+                // console.log('To:', formData.fields.email['en-US']);
+                // console.log('Name:', formData.fields.nomeECognome['en-US']);
+                // console.log('PDF Size:', pdfData.length);
 
                 const emailParams = {
                     to_email: formData.fields.email['en-US'].trim(),
@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     logo2_url: 'https://images.ctfassets.net/evaxoo3zkmhs/qLg1KL8BkxH2Hb3CH0PNo/c3a167c332b5ffb5292e412a288be4b4/logo_2.png'
                 };
 
-                console.log('Sending email...');
+                // console.log('Sending email...');
                 
                 try {
                     const response = await emailjs.send(
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         config.EMAILJS_PUBLIC_KEY
                     );
                     
-                    console.log('Email sent successfully. Response:', response);
+                    // console.log('Email sent successfully. Response:', response);
                     return response;
                 } catch (sendError) {
                     console.error('EmailJS send error:');

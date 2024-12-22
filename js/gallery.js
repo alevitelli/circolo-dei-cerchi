@@ -2,22 +2,22 @@ let client;
 
 async function initContentful() {
     try {
-        console.log('Waiting for configuration...');
+        // console.log('Waiting for configuration...');
         while (!window.CONFIG) {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         
         const config = window.getConfig();
-        console.log('Using configuration:', {
-            spaceId: config.CONTENTFUL_SPACE_ID,
-            tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
-        });
+        // console.log('Using configuration:', {
+        //     spaceId: config.CONTENTFUL_SPACE_ID,
+        //     tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
+        // });
 
         if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_ACCESS_TOKEN) {
             throw new Error('Invalid configuration');
         }
 
-        console.log('Creating Contentful client...');
+        // console.log('Creating Contentful client...');
         client = contentful.createClient({
             space: config.CONTENTFUL_SPACE_ID,
             accessToken: config.CONTENTFUL_ACCESS_TOKEN
@@ -34,7 +34,7 @@ async function initContentful() {
 
 async function loadGalleryImages() {
     try {
-        console.log('Fetching gallery images...');
+        // console.log('Fetching gallery images...');
         const response = await client.getAssets();
 
         // Filter assets that have the "gallery" tag
@@ -42,7 +42,7 @@ async function loadGalleryImages() {
             asset.metadata?.tags?.some(tag => tag.sys.id === 'gallery')
         );
 
-        console.log(`Received ${galleryImages.length} gallery images`);
+        // console.log(`Received ${galleryImages.length} gallery images`);
         
         const galleryContainer = document.querySelector('.gallery');
         galleryContainer.innerHTML = galleryImages.map(image => {

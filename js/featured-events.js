@@ -1,34 +1,34 @@
 async function initContentful() {
   try {
-    console.log('Waiting for configuration...');
+    // console.log('Waiting for configuration...');
     while (!window.CONFIG) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
     
     const config = window.getConfig();
-    console.log('Config Loaded');
+    // console.log('Config Loaded');
 
     if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_ACCESS_TOKEN) {
       throw new Error('Invalid configuration');
     }
 
-    console.log('Creating Contentful client...');
+    // console.log('Creating Contentful client...');
     const client = contentful.createClient({
       space: config.CONTENTFUL_SPACE_ID,
       accessToken: config.CONTENTFUL_ACCESS_TOKEN
     });
 
-    console.log('Fetching entries...');
+    // console.log('Fetching entries...');
     const response = await client.getEntries({
       content_type: 'calendarEvent',
       'fields.isFeatured': true,
       order: 'fields.eventDate'
     });
 
-    console.log('Received response:', {
-      total: response.total,
-      itemCount: response.items.length
-    });
+    // // console.log('Received response:', {
+    //   total: response.total,
+    //   itemCount: response.items.length
+    // });
 
     const eventsContainer = document.querySelector('.events-stream');
     if (!eventsContainer) {
@@ -50,7 +50,7 @@ async function initContentful() {
 
       // Create grid for remaining events (5-10)
       if (featuredEvents.length > 8) {
-        console.log('Creating grid for additional events');
+        // console.log('Creating grid for additional events');
         const eventsGrid = document.createElement('div');
         eventsGrid.className = 'events-grid';
         
@@ -61,13 +61,13 @@ async function initContentful() {
 
         eventsContainer.appendChild(eventsGrid);
       }
-      console.log('Events rendered successfully');
+      // console.log('Events rendered successfully');
     } else {
-      console.log('No featured events found');
+      // console.log('No featured events found');
       eventsContainer.innerHTML = '<p>No featured events available.</p>';
     }
   } catch (error) {
-    console.error('Error in initContentful:', error);
+    // console.error('Error in initContentful:', error);
     const eventsContainer = document.querySelector('.events-stream');
     if (eventsContainer) {
       eventsContainer.innerHTML = `<p>Error loading events: ${error.message}</p>`;
@@ -76,7 +76,7 @@ async function initContentful() {
 }
 
 function createFeaturedEventHTML(event, isFullWidth = false) {
-    console.log('Creating HTML for event:', event.fields.eventName);
+    // console.log('Creating HTML for event:', event.fields.eventName);
     
     // Safely get the image URL
     const imageUrl = event.fields.image?.fields?.file?.url
@@ -118,7 +118,7 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
         </div>
     `;
 
-    console.log('Generated HTML:', html);
+    // console.log('Generated HTML:', html);
     return html;
 }
 

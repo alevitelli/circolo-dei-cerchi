@@ -3,9 +3,9 @@ function initHamburgerMenu() {
     const mainNav = document.querySelector('.main-nav');
 
     if (hamburger && mainNav) {
-        console.log('Hamburger menu elements found');
+        // console.log('Hamburger menu elements found');
         hamburger.addEventListener('click', (e) => {
-            console.log('Hamburger clicked');
+            // console.log('Hamburger clicked');
             e.preventDefault();
             e.stopPropagation();
             hamburger.classList.toggle('active');
@@ -19,7 +19,7 @@ function initHamburgerMenu() {
             });
         });
     } else {
-        console.error('Hamburger menu elements not found');
+        // console.error('Hamburger menu elements not found');
     }
 }
 
