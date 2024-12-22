@@ -6,10 +6,7 @@ async function initContentful() {
     }
     
     const config = window.getConfig();
-    console.log('Using configuration:', {
-      spaceId: config.CONTENTFUL_SPACE_ID,
-      tokenLength: config.CONTENTFUL_ACCESS_TOKEN ? config.CONTENTFUL_ACCESS_TOKEN.length : 0
-    });
+    console.log('Config Loaded');
 
     if (!config.CONTENTFUL_SPACE_ID || !config.CONTENTFUL_ACCESS_TOKEN) {
       throw new Error('Invalid configuration');

@@ -8,7 +8,7 @@ async function initConfig() {
     }
     
     const config = await response.json();
-    console.log('Raw config received:', config);
+    console.log('Raw config received');
     
     // Verify the config has all required properties
     if (!config.CONTENTFUL_SPACE_ID || 
@@ -35,7 +35,7 @@ async function initConfig() {
       SUMUP_ACCESS_TOKEN: config.SUMUP_ACCESS_TOKEN
     };
     
-    console.log('Configuration loaded and verified:', window.CONFIG);
+    console.log('Configuration loaded and verified');
   } catch (error) {
     console.error('Failed to load configuration:', error);
     // Retry after 2 seconds
