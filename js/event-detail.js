@@ -98,7 +98,7 @@ function displayEvent(event) {
     const date = new Date(event.fields.eventDate);
     document.querySelector('.event-detail-date').innerHTML = `
         <img src="${dateIcon}" alt="Date" width="24" height="24">
-        ${date.toLocaleDateString('en-GB', {
+        ${date.toLocaleDateString('it-IT', {
             day: 'numeric',
             month: 'long',
             year: 'numeric'

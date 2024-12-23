@@ -79,14 +79,15 @@ function displayCorso(corso) {
             corso.fields.venue}`;
     
     // Format date
-    const date = new Date(corso.fields.eventDate);
+    const date = new Date(corso.fields.dataInizio);
     document.querySelector('.event-detail-date').innerHTML = `
         <img src="${dateIcon}" alt="Date" width="24" height="24">
-        ${date.toLocaleDateString('en-GB', {
+        ${date.toLocaleDateString('it-IT', {
             day: 'numeric',
             month: 'long',
             year: 'numeric'
         })}`;
+
 
     // Set description if exists
     if (corso.fields.descrizione) {
