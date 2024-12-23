@@ -65,21 +65,28 @@ function displayCorso(corso) {
         `;
     }
 
+    const venueIcon = 'https://images.ctfassets.net/evaxoo3zkmhs/3a2qMfTcYw7FVpenWtIUbA/18f2ea5eab6c876b5eee067dcc33e919/pin_814232.png';
+    const dateIcon = 'https://images.ctfassets.net/evaxoo3zkmhs/3dVwo9oUhdy03n0GxenUgc/9d0a258e63c6f4fe1f0f6790583e44f4/calendar_814025.png';
+
     // Set corso title
     document.querySelector('.event-detail-heading').textContent = corso.fields.nomeCorso;
 
     // Set metadata with clickable venue
-    document.querySelector('.event-detail-venue').innerHTML = corso.fields.venueLocation ? 
-        `<a href="${corso.fields.venueLocation}" target="_blank" rel="noopener noreferrer">${corso.fields.venue}</a>` : 
-        corso.fields.venue;
+    document.querySelector('.event-detail-venue').innerHTML = `
+        <img src="${venueIcon}" alt="Venue" width="24" height="24">
+        ${corso.fields.venueLocation ? 
+            `<a href="${corso.fields.venueLocation}" target="_blank" rel="noopener noreferrer">${corso.fields.venue}</a>` : 
+            corso.fields.venue}`;
     
     // Format date
-    const date = new Date(corso.fields.dataInizio);
-    document.querySelector('.event-detail-date').textContent = date.toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    });
+    const date = new Date(corso.fields.eventDate);
+    document.querySelector('.event-detail-date').innerHTML = `
+        <img src="${dateIcon}" alt="Date" width="24" height="24">
+        ${date.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        })}`;
 
     // Set description if exists
     if (corso.fields.descrizione) {
