@@ -144,11 +144,32 @@ body {
 }
 
 .event-meta {
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.meta-item {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    font-size: 1.4rem;
-    margin-bottom: 0.5rem;
+    gap: 12px;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.meta-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    opacity: 0.8;
+}
+
+.meta-item > div {
+    font-size: inherit;
+    line-height: inherit;
+    text-align: left;
 }
 
 .divider {
@@ -1025,6 +1046,7 @@ body {
 .event-detail-sidebar {
     font-size: 1.6rem;
     color: var(--color-accent2);
+    text-align: left;
 }
 
 .event-detail-sidebar > div {
