@@ -1018,7 +1018,7 @@ body {
 
 .event-detail-grid {
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 400px 2fr;
     gap: 2rem;
 }
 
@@ -1264,4 +1264,20 @@ body {
 .submit-button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+}
+
+.event-detail-venue,
+.event-detail-date,
+.event-detail-time,
+.event-detail-lineup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.event-detail-venue img,
+.event-detail-date img,
+.event-detail-time img,
+.event-detail-lineup img {
+    flex-shrink: 0;
 }
