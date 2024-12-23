@@ -98,8 +98,13 @@ function displayEvent(event) {
         document.querySelector('.event-detail-lineup').textContent = event.fields.eventDetail;
     }
 
+    // Only show time container if there is time information
+    const timeContainer = document.querySelector('.meta-item.time');
     if (event.fields.eventTime) {
+        timeContainer.style.display = 'flex';
         document.querySelector('.event-detail-time').textContent = event.fields.eventTime;
+    } else {
+        timeContainer.style.display = 'none';
     }
 
     // Set description if exists

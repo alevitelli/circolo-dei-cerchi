@@ -129,7 +129,7 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
     }
 }
 
-// took out from the before date 
+// took out from the before date
 // ${event.fields.venue ? `<span class="venue">${event.fields.venue}</span>` : ''}
 //                         <span class="divider">•</span>
 

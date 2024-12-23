@@ -1265,3 +1265,20 @@ body {
     opacity: 0.7;
     cursor: not-allowed;
 }
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.meta-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.event-meta {
+    margin: 16px 0;
+}
