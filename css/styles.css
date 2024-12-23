@@ -232,6 +232,7 @@ body {
 @media (max-width: 768px) {
     .event-title {
         font-size: 2rem;
+        margin-bottom: 0.2rem;
     }
     
     .event-card.featured {
@@ -261,8 +262,12 @@ body {
         padding: 1rem;
     }
     .cta-button {
-        padding: 0.5rem 1.5rem;
-        font-size: 1rem;
+        background-color: var(--color-accent2);
+        color: var(--color-background);
+        padding: 0.5rem 0.8rem;
+        margin-top: 0.4rem;
+        font-size:1rem;
+        border: 2px solid var(--color-background); /* Blue border */
     }
 }
 
@@ -297,11 +302,14 @@ body {
     }
     
     .events-stream {
-        padding: 1rem 0;
+        padding: 0rem 0;
+        background-color:var(--color-white);
+        gap: 0rem;
     }
     
     .event-card {
         height: 350px;
+        border-bottom: 1px solid var(--color-background);
     }
     
 }
@@ -313,7 +321,7 @@ body {
 /* Mobile optimizations */
 @media (max-width: 768px) {
     .event-card.featured .event-title {
-        font-size: 2.5rem;
+        font-size: 2.7rem;
     }
 
     .event-title {
@@ -334,7 +342,7 @@ body {
         display: flex;
         align-items: center;
         gap: 0.2rem;
-        font-size: 0.87rem;
+        font-size: 1rem;
         margin-bottom: 0.3rem;
     }
 
