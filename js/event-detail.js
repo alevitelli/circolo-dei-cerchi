@@ -81,25 +81,41 @@ function displayEvent(event) {
     // Set event title
     document.querySelector('.event-detail-heading').textContent = event.fields.eventName;
 
-    // Set metadata with clickable venue
-    document.querySelector('.event-detail-venue').innerHTML = event.fields.venueLocation ? 
-        `<a href="${event.fields.venueLocation}" target="_blank" rel="noopener noreferrer">${event.fields.venue}</a>` : 
-        event.fields.venue;
-    
-    // Format date
-    const date = new Date(event.fields.eventDate);
-    document.querySelector('.event-detail-date').textContent = date.toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    });
+    // Set metadata with icons
+    const venueIcon = 'https://images.ctfassets.net/evaxoo3zkmhs/3a2qMfTcYw7FVpenWtIUbA/18f2ea5eab6c876b5eee067dcc33e919/pin_814232.png';
+    const dateIcon = 'https://images.ctfassets.net/evaxoo3zkmhs/3dVwo9oUhdy03n0GxenUgc/9d0a258e63c6f4fe1f0f6790583e44f4/calendar_814025.png';
+    const timeIcon = 'https://images.ctfassets.net/evaxoo3zkmhs/48Z4ILzdzxgLGQ0HVXS8l2/e0e2debff0dfdee14902221154ed4e4a/wall-clock_814045.png';
+    const lineupIcon = 'https://images.ctfassets.net/evaxoo3zkmhs/3a2qMfTcYw7FVpenWtIUbA/18f2ea5eab6c876b5eee067dcc33e919/pin_814232.png';
 
+    // Set venue with icon
+    document.querySelector('.event-detail-venue').innerHTML = `
+        <img src="${venueIcon}" alt="Venue" width="24" height="24">
+        ${event.fields.venueLocation ? 
+            `<a href="${event.fields.venueLocation}" target="_blank" rel="noopener noreferrer">${event.fields.venue}</a>` : 
+            event.fields.venue}`;
+    
+    // Format date with icon
+    const date = new Date(event.fields.eventDate);
+    document.querySelector('.event-detail-date').innerHTML = `
+        <img src="${dateIcon}" alt="Date" width="24" height="24">
+        ${date.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        })}`;
+
+    // Set lineup with icon
     if (event.fields.eventDetail) {
-        document.querySelector('.event-detail-lineup').textContent = event.fields.eventDetail;
+        document.querySelector('.event-detail-lineup').innerHTML = `
+            <img src="${lineupIcon}" alt="Lineup" width="24" height="24">
+            ${event.fields.eventDetail}`;
     }
 
+    // Set time with icon
     if (event.fields.eventTime) {
-        document.querySelector('.event-detail-time').textContent = event.fields.eventTime;
+        document.querySelector('.event-detail-time').innerHTML = `
+            <img src="${timeIcon}" alt="Time" width="24" height="24">
+            ${event.fields.eventTime}`;
     }
 
     // Set description if exists
