@@ -121,7 +121,6 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
                     <h2 class="event-title">
                         <a href="/event?id=${event.sys.id}">${event.fields.eventName}</a>
                     </h2>
-                    ${event.fields.eventDetail ? `<p class="event-detail">${event.fields.eventDetail}</p>` : ''}
                     <a href="/event?id=${event.sys.id}" class="cta-button">SCOPRI DI PIU'</a>
                 </div>
             </div>
@@ -130,9 +129,12 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
     }
 }
 
-// took out from the html
+// took out from the before date 
 // ${event.fields.venue ? `<span class="venue">${event.fields.venue}</span>` : ''}
 //                         <span class="divider">•</span>
+
+// took out from above the button
+// ${event.fields.eventDetail ? `<p class="event-detail">${event.fields.eventDetail}</p>` : ''}
 
 // Start initialization when DOM is ready
 document.addEventListener('DOMContentLoaded', initContentful);
