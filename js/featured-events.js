@@ -114,8 +114,6 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
                 <div class="event-overlay"></div>
                 <div class="event-content">
                     <div class="event-meta">
-                        // ${event.fields.venue ? `<span class="venue">${event.fields.venue}</span>` : ''}
-                        // <span class="divider">•</span>
                         <span class="date">${formatDate(event.fields.eventDate)}</span>
                         <span class="divider">•</span>
                         ${event.fields.eventTime ? `<span class="time">${event.fields.eventTime}</span>` : ''}
@@ -131,6 +129,10 @@ function createFeaturedEventHTML(event, isFullWidth = false) {
         return html;
     }
 }
+
+// took out from the html
+// ${event.fields.venue ? `<span class="venue">${event.fields.venue}</span>` : ''}
+//                         <span class="divider">•</span>
 
 // Start initialization when DOM is ready
 document.addEventListener('DOMContentLoaded', initContentful);
