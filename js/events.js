@@ -66,7 +66,7 @@ function createEventHTML(event) {
                 <h2 class="event-name">${event.fields.eventName}</h2>
                 <div class="lineup">${event.fields.eventDetail || ''}</div>
             </div>
-            <a href="/event?id=${event.sys.id}" class="calendar-cta">SCOPRI DI PIU'</a>
+            <a href="/event?id=${event.sys.id}" class="calendar-cta">INFO</a>
         </article>
     `;
 }
